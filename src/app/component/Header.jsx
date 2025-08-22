@@ -27,7 +27,7 @@ export default function Header() {
             About
           </Link>
           <Link href="#Group" className="text-blue-100 hover:text-white transition">
-            Ministeries
+            Units
           </Link>
           <Link href="#contact" className="text-blue-100 hover:text-white transition">
             Contact
@@ -51,13 +51,13 @@ export default function Header() {
           <Link href="#" className="text-blue-100 hover:text-white transition">
             Home
           </Link>
-          <Link href="#" className="text-blue-100 hover:text-white transition">
+          <Link href="#about" className="text-blue-100 hover:text-white transition">
             About
           </Link>
-          <Link href="#" className="text-blue-100 hover:text-white transition">
-            Services
+          <Link href="#Group" className="text-blue-100 hover:text-white transition">
+            Units
           </Link>
-          <Link href="#" className="text-blue-100 hover:text-white transition">
+          <Link href="#contact" className="text-blue-100 hover:text-white transition">
             Contact
           </Link>
         </nav>

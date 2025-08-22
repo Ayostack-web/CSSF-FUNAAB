@@ -4,9 +4,9 @@ export default function Experience() {
   const experienceList = [
     {
       Day1: "Monday: Prayer Meeting 6 - 7:30pm",
-      Day2: "Bible Study: 2pm - 4pm",
+      Day2: "Wedenesday: Bible Study 2pm - 4pm",
       LastFriday: "Last Friday of the month Vigil",
-      Sunday: "Sunday: Thanksgiving Service 8pm",
+      Sunday: "Sunday: Thanksgiving Service 8am",
     },
   ];
 
