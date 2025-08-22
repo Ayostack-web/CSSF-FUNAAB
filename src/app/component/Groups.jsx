@@ -32,7 +32,7 @@ export default function Groups() {
       image: "/img/1755456270644.jpg",
       name: "Media Unit",
       icon: <FaPhotoVideo className="inline-block ml-2 text-lg" />,
-      about: "🎥 Capturing and sharing the message of God through creativity and technology"
+      about: "🎥 Capturing and sharing the message of God through creativity and technology."
     },
   ];
 

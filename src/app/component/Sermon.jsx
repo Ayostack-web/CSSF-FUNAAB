@@ -2,11 +2,11 @@
 import { useState } from "react";
 
 export default function SermonsMedia() {
-  const tabs = ["Latest Sermons", "Podcast", "Worship Music"];
-  const [activeTab, setActiveTab] = useState("Latest Sermons");
+  const tabs = ["Annointed Sounds", "Podcast", "Worship Music"];
+  const [activeTab, setActiveTab] = useState("Annointed Sounds");
 
   const mediaData = {
-    "Latest Sermons": [
+    "Annointed Sounds": [
       { type: "video", id: "5taka1Ftu-E", title: "Yahweh Sabaoth" },
       { type: "video", id: "85B_DpmMunk", title: "Omemma" },
     ],
@@ -15,7 +15,7 @@ export default function SermonsMedia() {
       { type: "audio", src: "/audio/episode2.mp3", title: "Episode 2: Grace" },
     ],
     "Worship Music": [
-      { type: "audio", id: "/media/Dunsin-Oyekan-Worthy-of-My-Praise-(CeeNaija.com) (1).mp3", title: "Worthy of My Praise" },
+      { type: "audio", src: "/media/Dunsin-Oyekan-Worthy-of-My-Praise-(CeeNaija.com) (1).mp3", title: "Worthy of My Praise" },
       { type: "audio", src: "/media/Nathaniel_Bassey_-_Hallelujah_Challenge_Praise_Medley_CeeNaija.com_ (1).mp3", title: "Hallelujah Challenge" },
     ],
   };
@@ -65,7 +65,7 @@ export default function SermonsMedia() {
             )}
             {item.type === "audio" && (
               <div className="p-4">
-                <h3 className="font-semibold mb-2">{item.title}</h3>
+               
                 <audio controls className="w-full">
                   <source src={item.src} type="audio/mpeg" />
                   Your browser does not support the audio element.
@@ -78,6 +78,4 @@ export default function SermonsMedia() {
           </div>
         ))}
       </div>
-    </section>
-  );
-}
+    </section> )} 
