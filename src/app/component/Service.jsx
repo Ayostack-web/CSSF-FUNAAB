@@ -20,7 +20,7 @@ export default function Experience() {
         {experienceList.map((exp, idx) => (
           <div
             key={idx}
-            className="bg-blue-50 p-6 rounded-xl shadow-lg hover:shadow-2xl transition-transform duration-300 transform hover:-translate-y-3 flex flex-col items-start"
+            className="bg-blue-50 p-6 shadow-blue-950 rounded-xl shadow-lg hover:shadow-2xl transition-transform duration-300 transform hover:-translate-y-3 flex flex-col items-start"
           >
             <div className="flex items-center mb-4 gap-3">
               <FaPrayingHands className="text-blue-500 text-2xl" />

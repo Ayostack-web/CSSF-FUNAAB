@@ -44,7 +44,7 @@ export default function Groups() {
         {Groups.map((grp, idx) => (
           <div
             key={idx}
-            className="bg-blue-50 rounded-lg shadow-md shadow-gray-500 hover:shadow-xl transition-shadow overflow-hidden"
+            className="bg-blue-50 rounded-lg shadow-lg shadow-blue-950 hover:shadow-xl transition-shadow overflow-hidden"
           >
             {/* Image */}
             <div className="relative w-full h-100">

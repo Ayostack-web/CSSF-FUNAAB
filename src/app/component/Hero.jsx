@@ -6,7 +6,7 @@ export default function Herovideo(){
   return (
     <section
       id="hero"
-      className="relative h-[80vh] flex items-center justify-center text-center text-white overflow-hidden"
+      className="relative h-[85vh] flex items-center justify-center text-center text-white overflow-hidden"
     >
       {/* Video Background */}
       <div className="absolute inset-0 z-0">
