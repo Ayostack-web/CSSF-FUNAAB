@@ -17,7 +17,7 @@ export default function Herovideo(){
           playsInline
           className="w-full h-full object-cover"
         >
-          <source src="/media/hero.mp4" type="video/mp4" />
+          <source src="/media/WhatsApp Video 2025-08-22 at 5.32.44 AM (1).mp4" type="video/mp4" />
         </video>
         {/* Overlay */}
         <div className="absolute inset-0 bg-black/50"></div>
@@ -32,7 +32,7 @@ export default function Herovideo(){
           Join us for worship, prayer, and impact
         </p>
         <a
-          href="./About"
+          href="#about"
           className="inline-block px-8 py-3 text-lg font-semibold text-black bg-gradient-to-tr from-blue-300 to-teal-50 rounded-full shadow-lg hover:from-blue-900 hover:to-white hover:-translate-y-1 transition"
         >
           Join Us

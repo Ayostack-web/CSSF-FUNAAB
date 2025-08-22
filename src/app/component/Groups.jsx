@@ -37,17 +37,17 @@ export default function Groups() {
   ];
 
   return (
-    <section className="py-8 px-4 bg-blue-100 text-black">
+    <section id="Group" className="py-8 px-4 bg-blue-100 text-black">
       <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-800 drop-shadow-md">MINISTRIES</h2>
 
       <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-10">
         {Groups.map((grp, idx) => (
           <div
             key={idx}
-            className="bg-white rounded-lg shadow-md shadow-gray-500 hover:shadow-xl transition-shadow overflow-hidden"
+            className="bg-blue-50 rounded-lg shadow-md shadow-gray-500 hover:shadow-xl transition-shadow overflow-hidden"
           >
             {/* Image */}
-            <div className="relative w-full h-64">
+            <div className="relative w-full h-100">
               <Image
                 src={grp.image}
                 alt={grp.name}

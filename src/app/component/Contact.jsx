@@ -2,7 +2,7 @@ const Contact = () => {
   return (
     <section
       id="contact"
-      className="bg-blue-100 py-4 px-4 text-center"
+      className="bg-blue-100 py-2 px-4 text-center"
     >
        {/* Contact Info */}
         <div className="mb-8 space-y-2  text-gray-700 text-left">
@@ -11,8 +11,8 @@ const Contact = () => {
             Harmony Estate, Funaab Gate,
             Abeokuta, Ogun State.
           </p>
-          <p className="font-bold">📞 (123) 456-7890</p>
-          <p className="font-bold">📧 hello@pizzaheaven.com</p>
+          <p className="font-bold">📞+234 705 971 2843 , +234 702 561 0725. </p>
+         {/*   <p className="font-bold">📧 hello@pizzaheaven.com</p>  */}
         </div>
 
        { /* Contact Form 

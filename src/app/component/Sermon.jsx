@@ -7,22 +7,24 @@ export default function SermonsMedia() {
 
   const mediaData = {
     "Latest Sermons": [
-      { type: "video", id: "dQw4w9WgXcQ", title: "Faith in Hard Times" },
-      { type: "video", id: "hY7m5jjJ9mM", title: "Walking in the Spirit" },
+      { type: "video", id: "5taka1Ftu-E", title: "Yahweh Sabaoth" },
+      { type: "video", id: "85B_DpmMunk", title: "Omemma" },
     ],
     "Podcast": [
       { type: "audio", src: "/audio/episode1.mp3", title: "Episode 1: Hope" },
       { type: "audio", src: "/audio/episode2.mp3", title: "Episode 2: Grace" },
     ],
     "Worship Music": [
-      { type: "video", id: "fLexgOxsZu0", title: "Worship Song 1" },
-      { type: "audio", src: "/audio/worship.mp3", title: "Worship Song 2" },
+      { type: "audio", id: "/media/Dunsin-Oyekan-Worthy-of-My-Praise-(CeeNaija.com) (1).mp3", title: "Worthy of My Praise" },
+      { type: "audio", src: "/media/Nathaniel_Bassey_-_Hallelujah_Challenge_Praise_Medley_CeeNaija.com_ (1).mp3", title: "Hallelujah Challenge" },
     ],
   };
 
   return (
-    <section className="py-10 px-4 bg-blue-100">
-      <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-800 drop-shadow-md">Sermons & Media</h2>
+    <section id="sermon" className="py-10 px-4 bg-blue-100">
+      <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-800 drop-shadow-md">
+        Sermons & Media
+      </h2>
 
       {/* Tabs */}
       <div className="flex justify-center gap-4 mb-8">
@@ -43,8 +45,11 @@ export default function SermonsMedia() {
 
       {/* Content */}
       <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
-        {mediaData[activeTab].map((item, idx) => (
-          <div key={idx} className="bg-white shadow rounded-lg overflow-hidden">
+        {mediaData[activeTab]?.map((item, idx) => (
+          <div
+            key={idx}
+            className="bg-blue-50 shadow rounded-lg overflow-hidden"
+          >
             {item.type === "video" && (
               <div className="relative">
                 <iframe
