@@ -6,7 +6,7 @@ export default function Groups() {
   const Groups = [
     {
       image: "/img/1755458216579.jpg",
-      name: "Prayer Unit",
+      name: "Prayer Session",
       icon: <FaPrayingHands className="inline-block ml-2 text-lg" />,
       about: "🙏 Connecting hearts to heaven through prayer. Join us in faith and fellowship!✨."
     },
@@ -18,19 +18,19 @@ export default function Groups() {
     },
     {
       image: "/img/1755455924019.jpg",
-      name: "Drama Unit",
+      name: "Drama",
       icon: <GiDramaMasks className="inline-block ml-2 text-lg" />,
       about: "🎭 Bringing God's word to life through creativity and performance!✨🙏."
     },
     {
       image: "/img/1755458107944.jpg",
-      name: "Evangelical Unit",
+      name: "Outreach",
       icon: <FaHandsHelping className="inline-block ml-2 text-lg" />,
       about: "📢 Sharing God's love with the world, one heart at a time!✨🙏."
     },
     {
       image: "/img/1755456270644.jpg",
-      name: "Media Unit",
+      name: "Media",
       icon: <FaPhotoVideo className="inline-block ml-2 text-lg" />,
       about: "🎥 Capturing and sharing the message of God through creativity and technology."
     },
