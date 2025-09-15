@@ -16,7 +16,7 @@ export default function Header() {
   alt="Ayostack Logo"
   width={100}
   height={30}
-  priority /> <h1 className="text-blue-100" >CSSF FUNAAB</h1>
+  priority /> <h1 className="text-blue-200 animate-pulse" >CSSF FUNAAB</h1>
 
         {/* Desktop Nav */}
         <nav className="hidden md:flex gap-4">
