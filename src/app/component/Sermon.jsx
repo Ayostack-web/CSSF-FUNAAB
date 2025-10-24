@@ -10,10 +10,12 @@ export default function SermonsMedia() {
       { type: "video", id: "5taka1Ftu-E", title: "Yahweh Sabaoth" },
       { type: "video", id: "85B_DpmMunk", title: "Omemma" },
     ],
-    "Podcast": [
+       "Podcast": [
       { type: "audio", src: "/audio/episode1.mp3", title: "Episode 1: Hope" },
-      { type: "audio", src: "/audio/episode2.mp3", title: "Episode 2: Grace" },
-    ],
+      { link: "https://drive.google.com/file/d/1eszL473_TZiEOgwZb7z49RRVot1ApFae/view?usp=drivesdk" , title: "Worker's Meeting:" },
+    ], 
+  
+
     "Worship Music": [
       { type: "audio", src: "/media/Dunsin-Oyekan-Worthy-of-My-Praise-(CeeNaija.com) (1).mp3", title: "Worthy of My Praise" },
       { type: "audio", src: "/media/Nathaniel_Bassey_-_Hallelujah_Challenge_Praise_Medley_CeeNaija.com_ (1).mp3", title: "Hallelujah Challenge" },
@@ -21,7 +23,7 @@ export default function SermonsMedia() {
   };
 
   return (
-    <section id="sermon" className="py-10 px-4 bg-blue-100">
+    <section id="sermon" className="py-10 px-4 bg-blue-50">
       <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-800 drop-shadow-md">
         Sermons & Media
       </h2>
@@ -70,6 +72,7 @@ export default function SermonsMedia() {
                   <source src={item.src} type="audio/mpeg" />
                   Your browser does not support the audio element.
                 </audio>
+              
               </div>
             )}
             <div className="p-4">
@@ -79,3 +82,30 @@ export default function SermonsMedia() {
         ))}
       </div>
     </section> )} 
+
+
+
+
+
+
+
+/*   
+
+When the Spirit repeats a truth, it’s because, He desires it to take deeper root in us. What may sound familiar is often God’s way of strengthening our understanding and guiding us into lasting transformation.  
+  
+Each repeated word is an invitation to listen again, this time, with a heart ready to obey.  
+*Access the messages here:*  
+Worker's Meeting:  
+https://drive.google.com/file/d/1eszL473_TZiEOgwZb7z49RRVot1ApFae/view?usp=drivesdk  
+  
+Sunday School:  
+https://drive.google.com/file/d/1XSMkHh-uLyUDZUm9IecdGMTpzFeoTsA0/view?usp=drivesdk  
+  
+Sermon:  
+https://drive.google.com/file/d/1pt7ZrzrW52_dBnJWve2fzd94q8gvdEAm/view?usp=drivesdk  
+  
+School Of The Spirit:  
+https://drive.google.com/file/d/1v7341dzrVp4bmDXFZpLds3Q9qqY-jWmn/view?usp=drivesdk
+
+
+ */

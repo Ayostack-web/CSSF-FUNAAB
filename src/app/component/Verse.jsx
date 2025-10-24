@@ -4,19 +4,19 @@ import { useEffect, useState } from "react";
 const testimonials = [
   {
     quote:
-      "For I know the plans I have for you,” declares the Lord, “plans to prosper you and not to harm you, plans to give you hope and a future.",
-    name: "Jeremiah 29:11 (NIV)",
+      "Let your kingdom come. Let your pleasure be done, as in heaven, so on earth.",
+    name: "Matthew 6:10 (NIV)",
 
   },
   {
    quote:
-      "Let your light shine before others, that they may see your good deeds and glorify your Father in heaven.",
-    name: " Matthew 5:16 (NIV)", 
+      "But let your first care be for his kingdom and his righteousness; and all these other things will be given to you in addition.",
+    name: " Matthew 6:33 (NIV)", 
   },
   {
     quote:
-      "And now these three remain: faith, hope and love. But the greatest of these is love.",
-    name: " 1 Corinthians 13:13 (NIV)",
+      "For the earth will be full of knowledge of the glory of the lord as the sea is covered by the waters.",
+    name: " Habakkuk 2:14 (NIV)",
   },
 ];
 
@@ -26,13 +26,13 @@ export default function Testimonials() {
   useEffect(() => {
     const interval = setInterval(
       () => setCurrent((prev) => (prev + 1) % testimonials.length),
-      5000
+      20000
     );
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <section className="text-center py-5 px-5 bg-blue-100 backdrop-blur-md rounded-2xl">
+    <section className="text-center py-5 px-5 bg-blue-50 backdrop-blur-md rounded-2xl">
       <h2 className="text-2xl mb-10 text-color">💬 Memory Verse</h2>
       <div className="max-w-[700px] mx-auto animate-fadeIn">
         <p className="italic text-2xl text-color">

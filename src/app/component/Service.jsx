@@ -11,12 +11,12 @@ export default function Experience() {
   ];
 
   return (
-    <section className="py-16 px-4 bg-gradient-to-r from-blue-100 via-blue-100 to-blue-100 text-gray-800">
+    <section className="py-16 px-4 bg-gradient-to-r from-blue-50 via-blue-50 to-blue-50 text-gray-800">
       <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-800 drop-shadow-md">
         Weekly Services
       </h2>
 
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+      <div className="max-w-3xl mx-auto grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-8">
         {experienceList.map((exp, idx) => (
           <div
             key={idx}

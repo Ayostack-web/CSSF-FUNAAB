@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { FaMusic, FaPrayingHands, FaHandsHelping, FaPhotoVideo } from "react-icons/fa";
 import { GiDramaMasks } from "react-icons/gi";
+import { FaExternalLinkAlt } from "react-icons/fa";
 
 export default function Groups() {
   const Groups = [
@@ -34,20 +35,27 @@ export default function Groups() {
       icon: <FaPhotoVideo className="inline-block ml-2 text-lg" />,
       about: "🎥 Capturing and sharing the message of God through creativity and technology."
     },
+     {
+      image: "/img/1755456270644.jpg",
+      name: "Media Unit",
+      icon: <FaPhotoVideo className="inline-block ml-2 text-lg" />,
+      about: "🎥 Capturing and sharing the message of God through creativity and technology.",
+      link: "#",
+    },
   ];
 
   return (
-    <section id="Group" className="py-8 px-4 bg-blue-100 text-black">
+    <section id="Group" className="py-8 px-4 bg-blue-50 text-black">
       <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-800 drop-shadow-md">UNITS</h2>
 
-      <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-10">
+      <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-10">
         {Groups.map((grp, idx) => (
           <div
             key={idx}
             className="bg-blue-50 rounded-lg shadow-lg shadow-blue-950 hover:shadow-xl transition-shadow overflow-hidden"
           >
             {/* Image */}
-            <div className="relative w-full h-100">
+            <div className="relative w-full h-80">
               <Image
                 src={grp.image}
                 alt={grp.name}
@@ -61,7 +69,14 @@ export default function Groups() {
               <h3 className="text-xl font-semibold flex items-center">
                 {grp.name} {grp.icon}
               </h3>
-              <p className="mt-2">{grp.about}</p>
+              <p className="mt-2">{grp.about}</p> <br />
+               {/* Optional link */}
+                 <a
+                  href={grp.link}
+                  className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
+                >
+                  Learn More <FaExternalLinkAlt size={14} />
+                </a> 
             </div>
           </div>
         ))}
@@ -69,3 +84,7 @@ export default function Groups() {
     </section>
   );
 }
+
+
+
+ 

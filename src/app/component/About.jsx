@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function AboutUs() {
   return (
-    <section id="about" className="bg-blue-100 py-6 px-6">
+    <section id="about" className="bg-blue-50 py-6 px-6">
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
         
         {/* Left Side - Image */}

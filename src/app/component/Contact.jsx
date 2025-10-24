@@ -2,7 +2,7 @@ const Contact = () => {
   return (
     <section
       id="contact"
-      className="bg-blue-100 py-2 px-4 text-center"
+      className="bg-blue-50 py-2 px-4 text-center"
     >
        {/* Contact Info */}
         <div className="mb-8 space-y-2  text-gray-700 text-left">
