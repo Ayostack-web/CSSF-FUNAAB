@@ -20,15 +20,15 @@ export default function UpcomingEvents() {
           {events.map((event, index) => (
             <div
               key={index}
-              className="bg-blue-100 rounded-xl shadow-md p-6 hover:shadow-xl transition-shadow duration-300 shadow-blue-600"
+              className="bg-blue-100 rounded-xl shadow-md p-6 hover:shadow-xl transition-shadow duration-300 shadow-sky-500"
             >
               <h3 className="text-xl font-semibold text-gray-900 mb-2">
                 {event.title}
               </h3>
-              <p className="text-gray-500 mb-1">
+              <p className="text-gray-700 mb-1">
                 <span className="font-medium">Date:</span> {event.date}
               </p>
-              <p className="text-gray-500 mb-4">
+              <p className="text-gray-700 mb-4">
                 <span className="font-medium">Location:</span> {event.location}
               </p>
               <a

@@ -4,6 +4,7 @@ import { useState } from "react";
 
 export default function DonateCTA({ onClose }) {
   const [copied, setCopied] = useState(false);
+  const accountname = "Boluwatife Afusat Sanni"
   const accountNumber = "8105225778";
   const bankName = "OPAY";
 
@@ -42,7 +43,7 @@ export default function DonateCTA({ onClose }) {
         <div className="mb-6 flex justify-center items-center space-x-4">
           <span className="text-lg font-semibold text-blue-950">
             Account: <span className="font-bold">{accountNumber}</span> —{" "}
-            {bankName}
+            {bankName} {accountname}
           </span>
           <button
             onClick={copyToClipboard}

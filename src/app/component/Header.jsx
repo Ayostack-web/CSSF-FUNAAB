@@ -12,7 +12,7 @@ export default function Header() {
         {/* Logo */}
 
   <Image  className="rounded-4xl h-[50px]"
-  src="/img/IMG_20250815_200847_696.jpg"
+  src="/img/CSSF-FUNAAB-LOGO.jpg"
   alt="Ayostack Logo"
   width={100}
   height={30}

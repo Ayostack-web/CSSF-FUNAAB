@@ -5,7 +5,7 @@ export default function Experience() {
     {
       Day1: "Monday: Prayer Meeting 6 - 7:30pm",
       Day2: "Wedenesday: Bible Study 2pm - 4pm",
-      LastFriday: "Last Friday of the month Vigil",
+      LastFriday: "Last Friday of the month Vigil 10pm",
       Sunday: "Sunday: Thanksgiving Service 8am",
     },
   ];
