@@ -2,9 +2,9 @@ import React from "react";
 
 const events = [
   {
-    title: "Data Science Workshop",
-    date: "Oct 25, 2025",
-    location: "Online (Zoom)",
+    title: "Brothers & Sisters week 2025",
+    date: "November 10th - 16th; 2025",
+    location: "Fellowship Auditorium ",
     link: "#",
   },
 ];
