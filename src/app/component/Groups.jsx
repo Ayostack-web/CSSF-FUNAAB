@@ -39,7 +39,7 @@ export default function Groups() {
       image: "/img/IMG_20251103_132510_405~2.jpg",
       name: "Levite Unit",
        icon: <GiCrossedSwords className="inline-block ml-2 text-lg" />,
-      about: "🎥 Capturing and sharing the message of God through creativity and technology.",
+      about: "To create an atmosphere where God's presence is honoured and His people are lifted.",
       link: "#",
     },
   ];
