@@ -8,7 +8,7 @@ export default function AboutUs() {
         {/* Left Side - Image */}
         <div className="relative w-full h-[400px] rounded-lg overflow-hidden shadow-lg">
           <Image
-            src="/img/1755455608396.jpg" // ✅ Correct reference (public/img/main.jpg)
+            src="/img/IMG_20251102_232411_744.jpg" // ✅ Correct reference (public/img/main.jpg)
             alt="Our Mission"
             fill
             className="object-cover contrast-100"

@@ -1,44 +1,44 @@
 import Image from "next/image";
 import { FaMusic, FaPrayingHands, FaHandsHelping, FaPhotoVideo } from "react-icons/fa";
-import { GiDramaMasks } from "react-icons/gi";
+import { GiCrossedSwords, GiDramaMasks } from "react-icons/gi";
 import { FaExternalLinkAlt } from "react-icons/fa";
 
 export default function Groups() {
   const Groups = [
     {
-      image: "/img/1755458216579.jpg",
+      image: "/img/IMG_20251102_233014_825.jpg",
       name: "Prayer Unit",
       icon: <FaPrayingHands className="inline-block ml-2 text-lg" />,
       about: "🙏 Connecting hearts to heaven through prayer. Join us in faith and fellowship!✨."
     },
     {
-      image: "/img/1755456350605.jpg",
+      image: "/img/IMG_20251102_163931_572.jpg",
       name: "Choir",
       icon: <FaMusic className="inline-block ml-2 text-lg" />,
       about: "🎶 Lifting hearts with every note! Join our choir and feel the joy of worship.🙌✨."
     },
     {
-      image: "/img/1755455924019.jpg",
+      image: "/img/IMG_20251102_232336_623.jpg",
       name: "Drama unit",
       icon: <GiDramaMasks className="inline-block ml-2 text-lg" />,
       about: "🎭 Bringing God's word to life through creativity and performance!✨🙏."
     },
     {
-      image: "/img/1755458107944.jpg",
+      image: "/img/IMG_20251102_232759_670.jpg",
       name: "Evangelical Unit",
       icon: <FaHandsHelping className="inline-block ml-2 text-lg" />,
       about: "📢 Sharing God's love with the world, one heart at a time!✨🙏."
     },
     {
-      image: "/img/1755456270644.jpg",
+      image: "/img/IMG_20251102_221019_834.jpg",
       name: "Media Unit",
       icon: <FaPhotoVideo className="inline-block ml-2 text-lg" />,
       about: "🎥 Capturing and sharing the message of God through creativity and technology."
     },
      {
-      image: "/img/1755456270644.jpg",
-      name: "Media Unit",
-      icon: <FaPhotoVideo className="inline-block ml-2 text-lg" />,
+      image: "/img/IMG_20251103_132510_405~2.jpg",
+      name: "Levite Unit",
+       icon: <GiCrossedSwords className="inline-block ml-2 text-lg" />,
       about: "🎥 Capturing and sharing the message of God through creativity and technology.",
       link: "#",
     },
@@ -46,7 +46,7 @@ export default function Groups() {
 
   return (
     <section id="Group" className="py-8 px-4 bg-blue-50 text-black">
-      <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-800 drop-shadow-md">UNITS</h2>
+      <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-800 drop-shadow-md">KINGDOM BUILDERS</h2>
 
       <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-10">
         {Groups.map((grp, idx) => (
