@@ -4,9 +4,9 @@ import { useState } from "react";
 
 export default function DonateCTA({ onClose }) {
   const [copiedAccount, setCopiedAccount] = useState(null); // State to track which account was copied
-  const accountname = "Boluwatife Afusat Sanni";
-  const accountNumber = "8105225778";
-  const bankName = "OPAY";
+  //const accountname = "Boluwatife Afusat Sanni";
+  //const accountNumber = "8105225778";
+  //const bankName = "OPAY";
 
   const accountname1 = "VANT(CSSF FUNAAB)";
   const accountNumber1 = "9643608280";
@@ -27,7 +27,7 @@ export default function DonateCTA({ onClose }) {
       id="give"
       className="fixed inset-0 bg-black/70 flex justify-center items-center z-50"
     >
-      <div className="bg-gray-100 p-8 rounded-2xl shadow-2xl max-w-lg w-full text-center relative">
+      <div className="bg-gray-100 p-7 rounded-2xl shadow-2xl max-w-lg w-full text-center relative">
         {/* Close button */}
         <button
           onClick={onClose}
@@ -43,7 +43,7 @@ export default function DonateCTA({ onClose }) {
           (Luke 6:38)
         </p>
 
-        {/* Account Info 1 */}
+        {/* Account Info 1 
         <div className="mb-6 flex justify-center items-center space-x-4">
           <span className="text-lg font-semibold text-blue-950">
             Account: <span className="font-bold">{accountNumber}</span> —{" "}
@@ -56,7 +56,9 @@ export default function DonateCTA({ onClose }) {
             {copiedAccount === accountNumber ? "Copied!" : "Copy"}
           </button>
         </div>
-        
+                */}       
+ 
+
         {/* Account Info 2 */}
         <div className="mb-6 flex justify-center items-center space-x-4">
           <span className="text-lg font-semibold text-blue-950">
