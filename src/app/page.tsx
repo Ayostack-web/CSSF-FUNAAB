@@ -11,7 +11,6 @@ import Contact from './component/Contact'
 import Sermon from './component/Sermon'
 import Give from './component/Give'
 import Donate from './component/DonateCTA'
-import UpcomingEvents  from './component/Upcoming'
 export default function Home() {
     const [showPledge, setShowPledge] = useState(false);
   return ( <>  
@@ -19,7 +18,6 @@ export default function Home() {
   <Header/>
   <Hero/>
    <About/>
-   <UpcomingEvents/>
   <Groups/>
   <Sermon/>
   <Service/>

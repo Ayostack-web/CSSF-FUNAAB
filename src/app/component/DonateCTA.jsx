@@ -3,16 +3,20 @@
 import { useState } from "react";
 
 export default function DonateCTA({ onClose }) {
-  const [copied, setCopied] = useState(false);
-  const accountname = "Boluwatife Afusat Sanni"
+  const [copiedAccount, setCopiedAccount] = useState(null); // State to track which account was copied
+  const accountname = "Boluwatife Afusat Sanni";
   const accountNumber = "8105225778";
   const bankName = "OPAY";
 
-  const copyToClipboard = async () => {
+  const accountname1 = "VANT(CSSF FUNAAB)";
+  const accountNumber1 = "9643608280";
+  const bankName1 = "Providus Bank Plc";
+
+  const copyToClipboard = async (accountNum) => {
     try {
-      await navigator.clipboard.writeText(accountNumber);
-      setCopied(true);
-      setTimeout(() => setCopied(false), 2000);
+      await navigator.clipboard.writeText(accountNum);
+      setCopiedAccount(accountNum); // Set the state to the account number that was copied
+      setTimeout(() => setCopiedAccount(null), 2000); // Reset after 2 seconds
     } catch (e) {
       console.error("copy failed", e);
     }
@@ -39,17 +43,31 @@ export default function DonateCTA({ onClose }) {
           (Luke 6:38)
         </p>
 
-        {/* Account Info */}
+        {/* Account Info 1 */}
         <div className="mb-6 flex justify-center items-center space-x-4">
           <span className="text-lg font-semibold text-blue-950">
             Account: <span className="font-bold">{accountNumber}</span> —{" "}
             {bankName} {accountname}
           </span>
           <button
-            onClick={copyToClipboard}
-           className="inline-block px-8 py-3 mt-3 text-lg font-semibold text-black bg-gradient-to-tr from-blue-300 to-teal-50 rounded-full shadow-lg hover:from-blue-900 hover:to-white hover:-translate-y-1 transition"
+            onClick={() => copyToClipboard(accountNumber)} // Pass the specific account number
+            className="inline-block px-8 py-3 mt-3 text-lg font-semibold text-black bg-gradient-to-tr from-blue-300 to-teal-50 rounded-full shadow-lg hover:from-blue-900 hover:to-white hover:-translate-y-1 transition"
           >
-            {copied ? "Copied!" : "Copy"}
+            {copiedAccount === accountNumber ? "Copied!" : "Copy"}
+          </button>
+        </div>
+        
+        {/* Account Info 2 */}
+        <div className="mb-6 flex justify-center items-center space-x-4">
+          <span className="text-lg font-semibold text-blue-950">
+            Account: <span className="font-bold">{accountNumber1}</span> —{" "}
+            {bankName1} {accountname1}
+          </span>
+          <button
+            onClick={() => copyToClipboard(accountNumber1)} // Pass the specific account number
+            className="inline-block px-8 py-3 mt-3 text-lg font-semibold text-black bg-gradient-to-tr from-blue-300 to-teal-50 rounded-full shadow-lg hover:from-blue-900 hover:to-white hover:-translate-y-1 transition"
+          >
+            {copiedAccount === accountNumber1 ? "Copied!" : "Copy"}
           </button>
         </div>
 
