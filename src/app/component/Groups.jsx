@@ -1,4 +1,4 @@
-import Image from "next/image";
+ import Image from "next/image";
 import { FaMusic, FaPrayingHands, FaHandsHelping, FaPhotoVideo } from "react-icons/fa";
 import { GiCrossedSwords, GiDramaMasks } from "react-icons/gi";
 import { FaExternalLinkAlt } from "react-icons/fa";
@@ -54,7 +54,7 @@ export default function Groups() {
             key={idx}
             className="bg-blue-50 rounded-lg shadow-lg shadow-blue-950 hover:shadow-xl transition-shadow overflow-hidden"
           >
-            {/* Image */}
+
             <div className="relative w-full h-80">
               <Image
                 src={grp.image}
@@ -64,13 +64,12 @@ export default function Groups() {
               />
             </div>
 
-            {/* Content */}
             <div className="p-6">
               <h3 className="text-xl font-semibold flex items-center">
                 {grp.name} {grp.icon}
               </h3>
               <p className="mt-2">{grp.about}</p> <br />
-               {/* Optional link */}
+     
                  <a
                   href={grp.link}
                   className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
@@ -82,9 +81,4 @@ export default function Groups() {
         ))}
       </div>
     </section>
-  );
-}
-
-
-
- 
+  )}
