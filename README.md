@@ -1,3 +1,5 @@
+## License
+This project is licensed under th MIT LICENSE - see the LICENSE file for details. 
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
 ## Getting Started
