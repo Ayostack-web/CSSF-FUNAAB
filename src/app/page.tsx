@@ -12,13 +12,16 @@ import Sermon from './component/Sermon'
 import Give from './component/Give'
 import Donate from './component/DonateCTA'
 import Upcoming from './component/Upcoming'
+import Scrollindicator from './component/ScrollIndicator'
+import Loader from './component/Loader'
 export default function Home() {
     const [showPledge, setShowPledge] = useState(false);
   return ( <>  
-
+  <Scrollindicator/>
   <Header/>
   <Hero/>
    <About/>
+   <Loader/>
    <Upcoming/>
   <Groups/>
   <Sermon/>

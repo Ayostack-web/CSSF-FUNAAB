@@ -15,23 +15,23 @@ export default function SermonsMedia() {
     "Sermons": [
       {
         type: "drive",
-        link: "https://drive.google.com/file/d/1b0TQzX_YZmy0dP_1s4iPlUb0utxsJm8L/view?usp=drivesdk",
+        link: "https://drive.google.com/file/d/15zUh-LbpBfl_rJ62cMcYS0P4NOtDGk-O/view?usp=drivesdk",
         title: "Worker's Meeting",
       },
       {
         type: "drive",
-        link: " https://drive.google.com/file/d/1HCMACf22LiL00183GmK-d8h_bJ2QJyzC/view?usp=drivesdk ",
+        link: " https://drive.google.com/file/d/1OEWj5XRjCdo4utVQ6h-hbPZQMHR3tZI3/view?usp=drivesdk ",
         title: "Sunday School" ,
       },
       {
         type: "drive",
-        link: " https://drive.google.com/file/d/1Y_h1tf6un0yL1kvYRFY_CG96beurqKyq/view?usp=drivesdk ",
+        link: " https://drive.google.com/file/d/1xQ8pRyS4PvV-0LmLeVU7n6psg-ESGf8K/view?usp=drivesdk ",
         title: "Sermon",
       },
             {
         type: "drive",
-        link: "https://drive.google.com/file/d/1NKJPXzsh32rsuSpgtECPvClvIS9nrB_Q/view?usp=drivesdk",
-        title: "Word Exposition",
+        link: "https://drive.google.com/file/d/13RL3QTGexELnommQ3U0uHHccGJDnJhSV/view?usp=drivesdk",
+        title: "School Of The Spirit",
       },
               {
         type: "drive",
@@ -142,12 +142,6 @@ export default function SermonsMedia() {
     </section>
   );
 }
-
-
-
-
-
-
 
 
 
