@@ -1,7 +1,9 @@
- import Image from "next/image";
+  "use client"
+import Image from "next/image";
 import { FaMusic, FaPrayingHands, FaHandsHelping, FaPhotoVideo } from "react-icons/fa";
 import { GiCrossedSwords, GiDramaMasks } from "react-icons/gi";
 import { FaExternalLinkAlt } from "react-icons/fa";
+import {motion} from "framer-motion"
 
 export default function Groups() {
   const Groups = [
@@ -35,23 +37,47 @@ export default function Groups() {
       icon: <FaPhotoVideo className="inline-block ml-2 text-lg" />,
       about: "🎥 Capturing and sharing the message of God through creativity and technology."
     },
-     {
+    {
       image: "/img/IMG_20251103_132510_405~2.jpg",
       name: "Levite Unit",
-       icon: <GiCrossedSwords className="inline-block ml-2 text-lg" />,
+      icon: <GiCrossedSwords className="inline-block ml-2 text-lg" />,
       about: "To create an atmosphere where God's presence is honoured and His people are lifted.",
       link: "#",
     },
   ];
+
+  // Define the animation properties
+  const cardVariants = {
+    // Initial state (hidden) - starting position from below and transparent
+    hidden: { opacity: 0, y: 50 },
+    // Animated state (visible) - moving to its final position
+    visible: (i) => ({
+      opacity: 1,
+      y: 0,
+      transition: {
+        // Stagger the animation based on the index (i)
+        delay: i * 0.15, 
+        duration: 0.5,
+        ease: "easeOut",
+      },
+    }),
+  };
 
   return (
     <section id="Group" className="py-8 px-4 bg-blue-50 text-black">
       <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-800 drop-shadow-md">KINGDOM BUILDERS</h2>
 
       <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-10">
+        
         {Groups.map((grp, idx) => (
-          <div
+          <motion.div
             key={idx}
+            // Use initial and whileInView to trigger animation as the element scrolls into view
+            initial="hidden"
+            whileInView="visible"
+            viewport={{ once: true, amount: 0.3 }} // Animate once and when 30% of the element is visible
+            variants={cardVariants}
+            custom={idx} // Pass the index as a custom prop for the stagger effect
             className="bg-blue-50 rounded-lg shadow-lg shadow-blue-950 hover:shadow-xl transition-shadow overflow-hidden"
           >
 
@@ -69,16 +95,20 @@ export default function Groups() {
                 {grp.name} {grp.icon}
               </h3>
               <p className="mt-2">{grp.about}</p> <br />
-     
-                 <a
-                  href={grp.link}
-                  className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
-                >
-                  Learn More <FaExternalLinkAlt size={14} />
-                </a> 
+      
+                  {/* Ensure the link exists before rendering the <a> tag */}
+                  {grp.link && (
+                    <a
+                      href={grp.link}
+                      className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
+                    >
+                      Learn More <FaExternalLinkAlt size={14} />
+                    </a>
+                  )}
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
     </section>
-  )}
+  )
+}

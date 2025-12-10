@@ -42,21 +42,7 @@ export default function DonateCTA({ onClose }) {
           shaken together, and running over, shall men give into your bosom.
           (Luke 6:38)
         </p>
-
-        {/* Account Info 1 
-        <div className="mb-6 flex justify-center items-center space-x-4">
-          <span className="text-lg font-semibold text-blue-950">
-            Account: <span className="font-bold">{accountNumber}</span> —{" "}
-            {bankName} {accountname}
-          </span>
-          <button
-            onClick={() => copyToClipboard(accountNumber)} // Pass the specific account number
-            className="inline-block px-8 py-3 mt-3 text-lg font-semibold text-black bg-gradient-to-tr from-blue-300 to-teal-50 rounded-full shadow-lg hover:from-blue-900 hover:to-white hover:-translate-y-1 transition"
-          >
-            {copiedAccount === accountNumber ? "Copied!" : "Copy"}
-          </button>
-        </div>
-                */}       
+     
  
 
         {/* Account Info 2 */}

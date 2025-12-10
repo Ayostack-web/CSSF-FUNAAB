@@ -1,6 +1,5 @@
-//"use client"
-//import { useRouter } from "next/navigation";
-
+"use client"
+import {motion} from "framer-motion"
 export default function Herovideo(){
 
   return (
@@ -31,12 +30,22 @@ export default function Herovideo(){
         <p className="text-lg md:text-xl mb-8 text-blue-100">
           Join us for worship, prayer, and impact
         </p>
-        <a
-          href="#about"
-          className="inline-block px-8 py-3 text-lg font-semibold text-black bg-gradient-to-tr from-blue-300 to-teal-50 rounded-full shadow-lg hover:from-blue-900 hover:to-white hover:-translate-y-1 transition"
-        >
-          Join Us
-        </a>
+         <motion.button
+                href="#about"  className="inline-block px-8 py-3 text-lg font-semibold text-black bg-gradient-to-tr from-blue-300 to-teal-50 rounded-full shadow-lg hover:from-blue-900 hover:to-white hover:-translate-y-1 transition "
+              animate={{
+                scale: [1, 1.1, 1],
+               
+              }}
+              transition={{
+                duration: 1,
+                repeat: Infinity,
+                repeatType: "loop",
+                ease: "easeInOut",
+              }}
+             
+            >
+               Join Us
+            </motion.button>
       </div>
     </section>
   );
