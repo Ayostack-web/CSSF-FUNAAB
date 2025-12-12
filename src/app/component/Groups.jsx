@@ -11,31 +11,36 @@ export default function Groups() {
       image: "/img/IMG_20251102_233014_825.jpg",
       name: "Prayer Unit",
       icon: <FaPrayingHands className="inline-block ml-2 text-lg" />,
-      about: "🙏 Connecting hearts to heaven through prayer. Join us in faith and fellowship!✨."
+      about: "🙏 Connecting hearts to heaven through prayer. Join us in faith and fellowship!✨.",
+      link: "#",
     },
     {
       image: "/img/IMG_20251102_163931_572.jpg",
       name: "Choir",
       icon: <FaMusic className="inline-block ml-2 text-lg" />,
-      about: "🎶 Lifting hearts with every note! Join our choir and feel the joy of worship.🙌✨."
+      about: "🎶 Lifting hearts with every note! Join our choir and feel the joy of worship.🙌✨.",
+      link: "#",
     },
     {
       image: "/img/IMG_20251102_232336_623.jpg",
       name: "Drama unit",
       icon: <GiDramaMasks className="inline-block ml-2 text-lg" />,
-      about: "🎭 Bringing God's word to life through creativity and performance!✨🙏."
+      about: "🎭 Bringing God's word to life through creativity and performance!✨🙏.",
+      link: "#",
     },
     {
       image: "/img/IMG_20251102_232759_670.jpg",
       name: "Evangelical Unit",
       icon: <FaHandsHelping className="inline-block ml-2 text-lg" />,
-      about: "📢 Sharing God's love with the world, one heart at a time!✨🙏."
+      about: "📢 Sharing God's love with the world, one heart at a time!✨🙏.",
+      link: "#",
     },
     {
       image: "/img/IMG_20251102_221019_834.jpg",
       name: "Media Unit",
       icon: <FaPhotoVideo className="inline-block ml-2 text-lg" />,
-      about: "🎥 Capturing and sharing the message of God through creativity and technology."
+      about: "🎥 Capturing and sharing the message of God through creativity and technology.",
+      link: "#",
     },
     {
       image: "/img/IMG_20251103_132510_405~2.jpg",
