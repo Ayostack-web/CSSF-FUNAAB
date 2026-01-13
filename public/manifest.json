@@ -1,0 +1,22 @@
+{
+  "name": "CSSF FUNAAB",
+  "short_name": "CSSF",
+  "icons": [
+    {
+      "src": "/img/CSSF-FUNAAB-LOGO.jpg",
+      "sizes": "192x192",
+      "type": "image/jpeg",
+      "purpose": "any"
+    },
+    {
+      "src": "/img/CSSF-FUNAAB-LOGO.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg",
+      "purpose": "maskable"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff"
+}
