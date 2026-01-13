@@ -15,25 +15,15 @@ export default function SermonsMedia() {
     "Sermons": [
       {
         type: "drive",
-        link: "https://drive.google.com/file/d/15zUh-LbpBfl_rJ62cMcYS0P4NOtDGk-O/view?usp=drivesdk",
-        title: "Worker's Meeting",
-      },
-      {
-        type: "drive",
-        link: " https://drive.google.com/file/d/1OEWj5XRjCdo4utVQ6h-hbPZQMHR3tZI3/view?usp=drivesdk ",
+        link: " https://drive.google.com/file/d/1X5U0eICmvsVnBi3lSu5hTAutSxFxWClU/view?usp=drivesdk ",
         title: "Sunday School" ,
       },
       {
         type: "drive",
-        link: " https://drive.google.com/file/d/1xQ8pRyS4PvV-0LmLeVU7n6psg-ESGf8K/view?usp=drivesdk ",
-        title: "Sermon",
+        link: " https://drive.google.com/file/d/1X5hHVNGZ6qbrqlqnjjxY8_rCYjvTrcdB/view?usp=drivesdk ",
+        title: "Sunday Sermon",
       },
-            {
-        type: "drive",
-        link: "https://drive.google.com/file/d/13RL3QTGexELnommQ3U0uHHccGJDnJhSV/view?usp=drivesdk",
-        title: "School Of The Spirit",
-      },
-              {
+         {
         type: "drive",
         link: "https://drive.google.com/file/d/1q3vloyY0NvMuIxwiaqfcZGGjekqAY8nn/view?usp=drivesdk",
         title: "Relationship Summit",
