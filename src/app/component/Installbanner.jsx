@@ -40,7 +40,7 @@ export default function InstallBanner() {
 
       <button
         onClick={installApp}
-        className="rounded-lg bg-green-600 px-4 py-2 text-sm font-semibold text-black hover:bg-green-400 transition"
+        className="rounded-lg bg-blue-200 px-4 py-2 text-sm font-semibold text-black hover:bg-blue-300 transition"
       >
         Install
       </button>
