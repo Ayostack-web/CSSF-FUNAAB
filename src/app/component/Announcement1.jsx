@@ -46,9 +46,6 @@ export default function UpcomingEvents() {
 }
 
 
-*/
-
-
 
 "use client";
 import { motion } from "framer-motion";
@@ -65,7 +62,7 @@ export default function Upcoming() {
           transition={{ duration: 0.6 }}
           className="relative overflow-hidden rounded-3xl border-2 border-blue-50 bg-blue-100 p-8 md:p-12 shadow-xl shadow-blue-900/5"
         >
-          {/* Subtle Background Decoration to match site feel */}
+     
           <div className="absolute -top-10 -right-10 h-40 w-40 rounded-full bg-blue-50/50" />
           
           <div className="relative z-10 text-center">
@@ -115,3 +112,8 @@ export default function Upcoming() {
     </section>
   );
 }
+
+
+
+*/
+

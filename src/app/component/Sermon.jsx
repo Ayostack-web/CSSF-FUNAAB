@@ -1,42 +1,16 @@
-
 "use client";
 import { useState } from "react";
+import { getDriveStreamLink } from "../utils/formatDriveLink";
 
-export default function SermonsMedia() {
+export default function SermonsMedia({ serverSermons }) {
   const tabs = ["Annointed Sounds", "Sermons", "Worship Music"];
   const [activeTab, setActiveTab] = useState("Annointed Sounds");
 
-  const mediaData = {
+  const staticMedia = {
     "Annointed Sounds": [
       { type: "video", id: "5taka1Ftu-E", title: "Yahweh Sabaoth" },
       { type: "video", id: "85B_DpmMunk", title: "Omemma" },
     ],
-
-    "Sermons": [
-      {
-        type: "drive",
-        link: " https://drive.google.com/file/d/1X5U0eICmvsVnBi3lSu5hTAutSxFxWClU/view?usp=drivesdk ",
-        title: "Sunday School" ,
-      },
-      {
-        type: "drive",
-        link: " https://drive.google.com/file/d/1X5hHVNGZ6qbrqlqnjjxY8_rCYjvTrcdB/view?usp=drivesdk ",
-        title: "Sunday Sermon",
-      },
-         {
-        type: "drive",
-        link: "https://drive.google.com/file/d/1q3vloyY0NvMuIxwiaqfcZGGjekqAY8nn/view?usp=drivesdk",
-        title: "Relationship Summit",
-      },
-              {
-        type: "drive",
-        link: "https://drive.google.com/file/d/1ZrWAQOxt_7YFi717QKu8AKvyuithNSKN/view?usp=drivesdk",
-        title: " Academic Talk",
-      },
-
-      
-    ],
-
     "Worship Music": [
       {
         type: "audio",
@@ -51,10 +25,13 @@ export default function SermonsMedia() {
     ],
   };
 
-  // helper to convert google drive "view" link to embeddable preview
-  const getDriveEmbedLink = (url) => {
-    const match = url.match(/\/d\/([a-zA-Z0-9_-]+)\//);
-    return match ? `https://drive.google.com/file/d/${match[1]}/preview` : url;
+  const mediaData = {
+    ...staticMedia,
+    "Sermons": serverSermons.map((s) => ({
+      type: "drive_embed", // Updated type
+      link: s.drive_link,
+      title: s.title,
+    })),
   };
 
   return (
@@ -63,15 +40,12 @@ export default function SermonsMedia() {
         Sermons & Media
       </h2>
 
-      {/* Tabs */}
       <div className="flex justify-center gap-4 mb-8">
         {tabs.map((tab) => (
           <button
             key={tab}
-            className={`px-4 py-2 rounded-full ${
-              activeTab === tab
-                ? "bg-blue-600 text-white"
-                : "bg-white text-blue-600 border border-blue-600"
+            className={`px-4 py-2 rounded-full transition-all ${
+              activeTab === tab ? "bg-blue-600 text-white shadow-lg" : "bg-white text-blue-600 border border-blue-600"
             }`}
             onClick={() => setActiveTab(tab)}
           >
@@ -80,51 +54,39 @@ export default function SermonsMedia() {
         ))}
       </div>
 
-      {/* Content */}
       <div className="grid md:grid-cols-2 gap-6 max-w-4xl mx-auto">
         {mediaData[activeTab]?.map((item, idx) => (
-          <div
-            key={idx}
-            className="bg-blue-50 shadow rounded-lg overflow-hidden"
-          >
+          <div key={idx} className="bg-white shadow-md rounded-lg overflow-hidden border border-blue-100">
+            
             {/* YouTube Videos */}
             {item.type === "video" && (
-              <iframe
-                width="100%"
-                height="250"
-                src={`https://www.youtube.com/embed/${item.id}`}
-                title={item.title}
-                frameBorder="0"
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-              ></iframe>
+              <iframe width="100%" height="250" src={`https://www.youtube.com/embed/${item.id}`} title={item.title} allowFullScreen></iframe>
             )}
 
             {/* Local Audio Files */}
             {item.type === "audio" && (
-              <div className="p-4">
+              <div className="p-4 bg-slate-50">
                 <audio controls className="w-full">
                   <source src={item.src} type="audio/mpeg" />
-                  Your browser does not support the audio element.
                 </audio>
               </div>
             )}
 
-            {/* Google Drive Embedded Player */}
-            {item.type === "drive" && (
-              <div className="relative">
+            {/* UPDATED: Google Drive Iframe Player */}
+            {item.type === "drive_embed" && (
+              <div className="relative w-full h-[150px] bg-slate-100">
                 <iframe
-                  src={getDriveEmbedLink(item.link)}
+                  src={getDriveStreamLink(item.link)}
                   width="100%"
-                  height="80"
+                  height="100%"
                   allow="autoplay"
-                  className="rounded"
+                  className="rounded-t-lg"
                 ></iframe>
               </div>
             )}
 
             <div className="p-4">
-              <h3 className="font-semibold">{item.title}</h3>
+              <h3 className="font-semibold text-blue-900">{item.title}</h3>
             </div>
           </div>
         ))}
@@ -132,13 +94,4 @@ export default function SermonsMedia() {
     </section>
   );
 }
-
-
-
-
-
-
-
-
-
 
