@@ -12,7 +12,7 @@ export default function AdminPage() {
           <p className="text-gray-500">Add new sermons to the website instantly.</p>
         </div>
         
-        <AdminPortal />
+        
         
         <div className="mt-12 text-sm text-gray-400 max-w-xs text-center">
           <p>Tip: Ensure Google Drive files are set to "Anyone with the link can view" before publishing.</p>
