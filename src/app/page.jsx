@@ -17,6 +17,10 @@ import Sermon from './component/Sermon'
 import PledgeSection from './component/PledgeSection' // New wrapper
 import Scrollindicator from './component/ScrollIndicator'
 import Loader from './component/Loader'
+import BannerOverlay from './component/BannerOverlay'
+
+
+
 
 export default async function Home() {
   // This now works because we are in a Server Component
@@ -36,6 +40,7 @@ export default async function Home() {
       <Scrollindicator/>
       <Header/>
       <Hero/>
+      <BannerOverlay /> {/* This floats on top of the video */}
       <About/>
       <Loader/>
       {/* Pass data as props */}
