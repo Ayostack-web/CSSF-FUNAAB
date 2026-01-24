@@ -35,7 +35,7 @@ export default function BannerAdmin() {
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    if (!imageFile || !eventName) return alert("Please select a file and name.");
+    if (!imageFile || !eventName) return alert("Please select a file and enter a name.");
 
     setIsUploading(true);
     try {
@@ -72,7 +72,6 @@ export default function BannerAdmin() {
 
   const handleDelete = async (id, storagePath) => {
     if (!confirm("Are you sure you want to delete this banner?")) return;
-
     setDeletingId(id);
     try {
       if (storagePath) {
@@ -100,45 +99,58 @@ export default function BannerAdmin() {
             className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none"
           />
           
+          {/* MOBILE FRIENDLY UPLOAD BOX */}
           <div className="flex flex-col items-center justify-center border-2 border-dashed border-blue-100 rounded-lg p-6 bg-blue-50">
             <input 
-              type="file" accept="image/*" ref={fileInputRef}
+              type="file" 
+              accept="image/*" 
+              capture="environment" // Forces camera on mobile
+              ref={fileInputRef}
               onChange={handleFileChange}
-              className="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer"
+              className="hidden"
+              id="banner-upload"
             />
+            <label 
+              htmlFor="banner-upload" 
+              className="cursor-pointer bg-blue-600 text-white px-6 py-3 rounded-full font-bold hover:bg-blue-700 transition shadow-lg active:scale-95"
+            >
+              {imageFile ? "Change Image" : "Select or Take Photo"}
+            </label>
+
             {previewUrl && (
-              <div className="mt-4 relative w-full max-w-[300px] h-40 rounded-lg overflow-hidden shadow-inner bg-white">
+              <div className="mt-4 relative w-full max-w-[300px] h-40 rounded-lg overflow-hidden shadow-inner bg-white border">
                 <img src={previewUrl} alt="Preview" className="w-full h-full object-contain" />
               </div>
             )}
+            <p className="mt-2 text-xs text-blue-400">{imageFile ? imageFile.name : "Tap to open camera or gallery"}</p>
           </div>
 
           <button 
             disabled={isUploading} 
-            className="w-full bg-blue-700 text-white p-3 rounded-lg font-bold hover:bg-blue-800 transition disabled:bg-gray-400"
+            className="w-full bg-blue-800 text-white p-4 rounded-lg font-bold hover:bg-blue-900 transition disabled:bg-gray-400 shadow-md"
           >
-            {isUploading ? "Uploading to Server..." : "Publish Banner"}
+            {isUploading ? "Uploading..." : "Publish to Website"}
           </button>
         </div>
       </form>
 
+      {/* MANAGE SECTION */}
       <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
         <h3 className="text-xl font-bold mb-4 text-blue-900">Live Banners</h3>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
           {banners.map((banner) => (
-            <div key={banner.id} className="border rounded-xl p-4 flex flex-col items-center bg-slate-50 relative group">
-              <img src={banner.image_url} alt={banner.event_name} className="w-full h-40 object-cover rounded-lg mb-3 shadow-sm" />
-              <p className="font-bold text-gray-800">{banner.event_name}</p>
+            <div key={banner.id} className="border rounded-xl p-4 flex flex-col items-center bg-slate-50 shadow-sm">
+              <img src={banner.image_url} alt={banner.event_name} className="w-full h-40 object-cover rounded-lg mb-3" />
+              <p className="font-bold text-gray-800 text-center">{banner.event_name}</p>
               <button 
                 onClick={() => handleDelete(banner.id, banner.storage_path)}
                 disabled={deletingId === banner.id}
-                className="mt-3 text-red-600 text-sm font-bold bg-red-50 px-4 py-2 rounded-lg hover:bg-red-600 hover:text-white transition w-full"
+                className="mt-3 text-red-600 text-sm font-bold bg-red-50 px-4 py-2 rounded-lg hover:bg-red-600 hover:text-white transition w-full border border-red-100"
               >
-                {deletingId === banner.id ? "Deleting..." : "Remove Banner"}
+                {deletingId === banner.id ? "Deleting..." : "Delete Banner"}
               </button>
             </div>
           ))}
-          {banners.length === 0 && <p className="text-gray-400 italic text-center col-span-2 py-10">No banners currently live.</p>}
         </div>
       </div>
     </div>
