@@ -1,124 +1,127 @@
 "use client";
-import { useState, useRef } from "react"; // Added useRef to reset the file input
+import { useState, useEffect, useRef } from "react";
 import { createClient } from "../utils/supabase/client";
 
 export default function BannerAdmin() {
+  const [banners, setBanners] = useState([]);
   const [eventName, setEventName] = useState("");
   const [imageFile, setImageFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null); // Added preview state
   const [isUploading, setIsUploading] = useState(false);
-  
-  const fileInputRef = useRef(null); // Reference to the file input DOM element
+  const fileInputRef = useRef(null);
   const supabase = createClient();
 
-  // Handle file selection and generate a preview
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
-      setPreviewUrl(URL.createObjectURL(file)); // Create a temporary URL for preview
-    }
+  // Load existing banners so we can delete them
+  const fetchBanners = async () => {
+    const { data } = await supabase
+      .from("banners")
+      .select("*")
+      .order("created_at", { ascending: false });
+    setBanners(data || []);
   };
+
+  useEffect(() => {
+    fetchBanners();
+  }, []);
 
   const handleUpload = async (e) => {
     e.preventDefault();
-    if (!imageFile || !eventName) return alert("Please select a file and enter a name.");
+    if (!imageFile || !eventName) return alert("Please select a file and name.");
 
     setIsUploading(true);
     try {
       const fileExt = imageFile.name.split('.').pop();
-      const fileName = `${Date.now()}.${fileExt}`;
-      const filePath = `banners/${fileName}`;
+      const filePath = `banners/${Date.now()}.${fileExt}`;
 
-      // 1. Upload to Supabase Storage
+      // 1. Upload file to Storage
       const { error: uploadError } = await supabase.storage
         .from("event-banners")
         .upload(filePath, imageFile);
-
       if (uploadError) throw uploadError;
 
       // 2. Get Public URL
-      const { data: { publicUrl } } = supabase.storage
-        .from("event-banners")
-        .getPublicUrl(filePath);
+      const { data: { publicUrl } } = supabase.storage.from("event-banners").getPublicUrl(filePath);
 
-      // 3. Save to Database
-      const { error: dbError } = await supabase
-        .from("banners")
-        .insert([{ 
-          event_name: eventName, 
-          image_url: publicUrl,
-          storage_path: filePath 
-        }]);
+      // 3. Save to DB (including the filePath so we can delete it later)
+      const { error: dbError } = await supabase.from("banners").insert([{ 
+        event_name: eventName, 
+        image_url: publicUrl,
+        storage_path: filePath 
+      }]);
 
       if (dbError) throw dbError;
-
-      alert("Success! Image uploaded and banner published.");
-      
-      // Reset Form
+      alert("Banner uploaded!");
       setEventName("");
-      setImageFile(null);
-      setPreviewUrl(null);
-      if (fileInputRef.current) fileInputRef.current.value = ""; // Clear the file input visually
-      
+      if (fileInputRef.current) fileInputRef.current.value = "";
+      fetchBanners();
     } catch (err) {
-      alert("Error: " + err.message);
+      alert(err.message);
     } finally {
       setIsUploading(false);
     }
   };
 
+  const handleDelete = async (id, storagePath) => {
+    if (!confirm("Are you sure you want to delete this banner?")) return;
+
+    try {
+      // 1. Delete from Storage Bucket
+      if (storagePath) {
+        const { error: storageError } = await supabase.storage
+          .from("event-banners")
+          .remove([storagePath]);
+        if (storageError) throw storageError;
+      }
+
+      // 2. Delete from Database Table
+      const { error: dbError } = await supabase.from("banners").delete().eq("id", id);
+      if (dbError) throw dbError;
+
+      alert("Banner deleted successfully!");
+      fetchBanners();
+    } catch (err) {
+      alert("Error deleting: " + err.message);
+    }
+  };
+
   return (
-    <div className="p-6 bg-white rounded-2xl shadow-xl border border-blue-50">
-      <h3 className="text-xl font-bold mb-6 text-blue-900 text-center">New Event Banner</h3>
-      
-      <form onSubmit={handleUpload} className="space-y-4">
-        {/* Event Name Input */}
+    <div className="max-w-4xl mx-auto p-4 space-y-8">
+      {/* UPLOAD SECTION */}
+      <form onSubmit={handleUpload} className="p-6 bg-white rounded-xl shadow-md border border-blue-100">
+        <h3 className="text-xl font-bold mb-4 text-blue-900">Add New Banner</h3>
         <input 
-          type="text" 
-          placeholder="Enter Event Name" 
-          className="w-full p-3 border rounded-lg text-black outline-none focus:ring-2 focus:ring-blue-500"
-          value={eventName}
+          type="text" placeholder="Event Name" value={eventName}
           onChange={(e) => setEventName(e.target.value)}
+          className="w-full p-3 mb-4 border rounded-lg text-black"
         />
-
-        {/* File Input */}
-        <div className="flex flex-col items-center justify-center border-2 border-dashed border-blue-200 rounded-lg p-4 bg-blue-50">
-          <input 
-            type="file" 
-            accept="image/*"
-            ref={fileInputRef}
-            className="hidden" // Hide the ugly default input
-            id="banner-upload"
-            onChange={handleFileChange}
-          />
-          <label 
-            htmlFor="banner-upload" 
-            className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition"
-          >
-            Select Image
-          </label>
-          
-          {/* Image Preview */}
-          {previewUrl && (
-            <div className="mt-4 w-full max-w-[200px] h-[120px] rounded-lg overflow-hidden shadow-md">
-              <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
-            </div>
-          )}
-          
-          <p className="text-xs text-blue-400 mt-2">
-            {imageFile ? imageFile.name : "No file chosen (PNG, JPG, WEBP)"}
-          </p>
-        </div>
-
-        {/* Submit Button */}
-        <button 
-          disabled={isUploading}
-          className="w-full bg-blue-800 text-white p-3 rounded-lg font-bold hover:bg-blue-900 transition disabled:bg-slate-400"
-        >
-          {isUploading ? "Uploading to Server..." : "Upload & Publish Banner"}
+        <input 
+          type="file" accept="image/*" ref={fileInputRef}
+          onChange={(e) => setImageFile(e.target.files[0])}
+          className="w-full mb-4 text-sm text-slate-500"
+        />
+        <button disabled={isUploading} className="w-full bg-blue-700 text-white p-3 rounded-lg font-bold">
+          {isUploading ? "Uploading..." : "Upload Banner"}
         </button>
       </form>
+
+      {/* MANAGE/DELETE SECTION */}
+      <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
+        <h3 className="text-xl font-bold mb-4 text-blue-900">Live Banners</h3>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {banners.map((banner) => (
+            <div key={banner.id} className="border rounded-lg p-3 flex flex-col items-center">
+              <img src={banner.image_url} alt={banner.event_name} className="w-full h-32 object-cover rounded-md mb-2" />
+              <p className="font-medium text-sm text-gray-800">{banner.event_name}</p>
+              <button 
+                onClick={() => handleDelete(banner.id, banner.storage_path)}
+                className="mt-2 text-red-600 text-xs font-bold hover:underline"
+              >
+                Delete Permanently
+              </button>
+            </div>
+          ))}
+          {banners.length === 0 && <p className="text-gray-400 italic">No banners uploaded yet.</p>}
+        </div>
+      </div>
     </div>
   );
 }
