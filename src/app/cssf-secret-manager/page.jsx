@@ -1,5 +1,4 @@
 // src/app/admin-portal/page.jsx
-import AdminPortal from "../component/";
 import Header from "../component/Header";
 import Footer from "../component/Footer";
 

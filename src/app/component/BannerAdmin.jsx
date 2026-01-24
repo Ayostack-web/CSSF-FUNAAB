@@ -41,11 +41,11 @@ export default function BannerAdmin() {
   return (
     <div className="space-y-6">
       <div className="bg-white p-6 rounded-xl shadow-lg border border-green-100">
-        <h2 className="text-xl font-bold text-green-900 mb-4">Add Event Banner</h2>
+        <h2 className="text-xl font-bold text-blue-900 mb-4">Add Event Banner</h2>
         <form onSubmit={handleBannerUpload} className="space-y-4">
           <input type="text" placeholder="Event Name" className="w-full p-2 border rounded text-black" value={eventName} onChange={e => setEventName(e.target.value)} />
           <input type="text" placeholder="Direct Image URL (.jpg, .png)" className="w-full p-2 border rounded text-black" value={imageLink} onChange={e => setImageLink(e.target.value)} />
-          <button className="w-full bg-green-600 text-white py-2 rounded font-bold hover:bg-green-700" disabled={loading}>
+          <button className="w-full bg-blue-600 text-white py-2 rounded font-bold hover:bg-blue-700" disabled={loading}>
             {loading ? "Saving..." : "Upload Banner"}
           </button>
         </form>

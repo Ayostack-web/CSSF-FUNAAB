@@ -4,8 +4,7 @@ import { createClient } from "../utils/supabase/client";
 
 // ✅ Removed the non-existent AdminPortal import that caused the build failure
 import BannerAdmin from "../component/BannerAdmin"; 
-import Header from "../component/Header";
-import Footer from "../component/Footer";
+
 
 export default function AdminDashboardPage() {
   // --- Verification State ---
