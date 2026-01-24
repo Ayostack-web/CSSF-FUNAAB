@@ -1,7 +1,8 @@
 // src/app/admin-portal/page.jsx
 import Header from "../component/Header";
 import Footer from "../component/Footer";
-
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 export default function AdminPage() {
   return (
     <main className="min-h-screen bg-slate-50">

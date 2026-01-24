@@ -1,7 +1,8 @@
 "use client";
 import { useState, useEffect } from "react";
 import { createClient } from "../utils/supabase/client";
-
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
 // ✅ Removed the non-existent AdminPortal import that caused the build failure
 import BannerAdmin from "../component/BannerAdmin"; 
 
