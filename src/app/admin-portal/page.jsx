@@ -5,7 +5,7 @@ import { createClient } from "../utils/supabase/client";
 
 // Import your child components correctly
 // Note: Ensure AdminPortal is in ../component/AdminPortal to avoid name conflict with this Page
-import AdminPortal from "../admin-portal/page"; 
+import AdminPortal from "../component/AdminPortal";
 import BannerAdmin from "../component/BannerAdmin"; 
 
 export default function AdminDashboardPage() {
@@ -178,6 +178,7 @@ export default function AdminDashboardPage() {
           </div>
 
         </div>
+        <AdminPortal />
       </div>
     </main>
   );
