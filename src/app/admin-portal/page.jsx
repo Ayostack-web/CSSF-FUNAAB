@@ -1,8 +1,4 @@
 
-
-
-
-
 "use client";
 import { useState, useEffect } from "react";
 import { createClient } from "../utils/supabase/client";
@@ -12,7 +8,7 @@ import { createClient } from "../utils/supabase/client";
 import AdminPortal from "../admin-portal/page"; 
 import BannerAdmin from "../component/BannerAdmin"; 
 
-export default function AdminDashboard() {
+export default function AdminDashboardPage() {
   // --- Verification State ---
   const [isAdmin, setIsAdmin] = useState(false);
   const [passkey, setPasskey] = useState("");
