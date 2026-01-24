@@ -101,15 +101,16 @@ export default function BannerAdmin() {
           
           {/* MOBILE FRIENDLY UPLOAD BOX */}
           <div className="flex flex-col items-center justify-center border-2 border-dashed border-blue-100 rounded-lg p-6 bg-blue-50">
-            <input 
-              type="file" 
-              accept="image/*" 
-              capture="environment" // Forces camera on mobile
-              ref={fileInputRef}
-              onChange={handleFileChange}
-              className="hidden"
-              id="banner-upload"
-            />
+              <input  
+          type="file" 
+          accept="image/*" 
+          // Removing capture="environment" allows the phone to show the "Gallery" option
+          ref={fileInputRef} 
+       onChange={handleFileChange}
+  className="hidden"
+  id="banner-upload"
+/>
+
             <label 
               htmlFor="banner-upload" 
               className="cursor-pointer bg-blue-600 text-white px-6 py-3 rounded-full font-bold hover:bg-blue-700 transition shadow-lg active:scale-95"

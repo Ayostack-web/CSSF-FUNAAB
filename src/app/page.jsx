@@ -17,7 +17,7 @@ import Sermon from './component/Sermon'
 import PledgeSection from './component/PledgeSection' // New wrapper
 import Scrollindicator from './component/ScrollIndicator'
 import Loader from './component/Loader'
-import BannerOverlay from './component/BannerOverlay'
+import BannerSection from './component/BannerSection'
 
 
 
@@ -40,9 +40,9 @@ export default async function Home() {
       <Scrollindicator/>
       <Header/>
       <Hero/>
-      <BannerOverlay /> {/* This floats on top of the video */}
-      <About/>
+      <About />
       <Loader/>
+       <BannerSection /> {/* Now it sits between Hero and About */}
       {/* Pass data as props */}
       <Groups serverGroups={groups || []} />
         <Sermon serverSermons={sermons || []} />
