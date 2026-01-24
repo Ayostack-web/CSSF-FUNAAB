@@ -1,12 +1,11 @@
-
 "use client";
 import { useState, useEffect } from "react";
 import { createClient } from "../utils/supabase/client";
 
-// Import your child components correctly
-// Note: Ensure AdminPortal is in ../component/AdminPortal to avoid name conflict with this Page
-import AdminPortal from "../component/AdminPortal";
+// ✅ Removed the non-existent AdminPortal import that caused the build failure
 import BannerAdmin from "../component/BannerAdmin"; 
+import Header from "../component/Header";
+import Footer from "../component/Footer";
 
 export default function AdminDashboardPage() {
   // --- Verification State ---
@@ -65,7 +64,7 @@ export default function AdminDashboardPage() {
       alert("Sermon Published successfully!");
       setTitle("");
       setLink("");
-      fetchSermons(); // Refresh the list
+      fetchSermons(); 
     }
   };
 
@@ -73,13 +72,10 @@ export default function AdminDashboardPage() {
     if (confirm("Are you sure you want to delete this sermon?")) {
       const { error } = await supabase.from("sermons").delete().eq("id", id);
       if (error) alert("Error deleting: " + error.message);
-      else fetchSermons(); // Refresh the list
+      else fetchSermons(); 
     }
   };
 
-  // --- RENDER LOGIC ---
-
-  // 1. LOGIN GATE: Show only when not verified
   if (!isAdmin) {
     return (
       <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
@@ -102,7 +98,6 @@ export default function AdminDashboardPage() {
     );
   }
 
-  // 2. DASHBOARD: Show after login
   return (
     <main className="min-h-screen bg-slate-50 py-12 px-4">
       <div className="max-w-6xl mx-auto">
@@ -120,8 +115,6 @@ export default function AdminDashboardPage() {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-10 items-start">
-          
-          {/* LEFT COLUMN: Sermon Management Logic */}
           <div className="flex flex-col gap-8">
             <div className="bg-white p-8 rounded-2xl shadow-xl border border-blue-100">
               <h2 className="text-2xl font-bold text-blue-900 mb-6">Upload Sermon</h2>
@@ -171,14 +164,12 @@ export default function AdminDashboardPage() {
             </div>
           </div>
 
-          {/* RIGHT COLUMN: Banner Management Component */}
           <div className="space-y-4">
              <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest ml-2">Event Banners</h3>
              <BannerAdmin /> 
           </div>
-
         </div>
-        <AdminPortal />
+        {/* ✅ Extra <AdminPortal /> tag removed to fix build error */}
       </div>
     </main>
   );
