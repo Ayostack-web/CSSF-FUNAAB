@@ -1,12 +1,24 @@
 "use client";
-import { useState } from "react";
+import { useState, useRef } from "react"; // Added useRef to reset the file input
 import { createClient } from "../utils/supabase/client";
 
 export default function BannerAdmin() {
   const [eventName, setEventName] = useState("");
   const [imageFile, setImageFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null); // Added preview state
   const [isUploading, setIsUploading] = useState(false);
+  
+  const fileInputRef = useRef(null); // Reference to the file input DOM element
   const supabase = createClient();
+
+  // Handle file selection and generate a preview
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setImageFile(file);
+      setPreviewUrl(URL.createObjectURL(file)); // Create a temporary URL for preview
+    }
+  };
 
   const handleUpload = async (e) => {
     e.preventDefault();
@@ -14,36 +26,41 @@ export default function BannerAdmin() {
 
     setIsUploading(true);
     try {
-      // 1. Upload the file to your "event-banners" bucket
       const fileExt = imageFile.name.split('.').pop();
-      const fileName = `${Date.now()}.${fileExt}`; // Unique name to avoid overwriting
+      const fileName = `${Date.now()}.${fileExt}`;
       const filePath = `banners/${fileName}`;
 
-      const { data: uploadData, error: uploadError } = await supabase.storage
+      // 1. Upload to Supabase Storage
+      const { error: uploadError } = await supabase.storage
         .from("event-banners")
         .upload(filePath, imageFile);
 
       if (uploadError) throw uploadError;
 
-      // 2. Get the public URL for the image
+      // 2. Get Public URL
       const { data: { publicUrl } } = supabase.storage
         .from("event-banners")
         .getPublicUrl(filePath);
 
-      // 3. Save the public URL into your banners table
+      // 3. Save to Database
       const { error: dbError } = await supabase
         .from("banners")
         .insert([{ 
           event_name: eventName, 
           image_url: publicUrl,
-          storage_path: filePath // Good to keep for when you want to delete the file later
+          storage_path: filePath 
         }]);
 
       if (dbError) throw dbError;
 
       alert("Success! Image uploaded and banner published.");
+      
+      // Reset Form
       setEventName("");
       setImageFile(null);
+      setPreviewUrl(null);
+      if (fileInputRef.current) fileInputRef.current.value = ""; // Clear the file input visually
+      
     } catch (err) {
       alert("Error: " + err.message);
     } finally {
@@ -52,27 +69,56 @@ export default function BannerAdmin() {
   };
 
   return (
-    <form onSubmit={handleUpload} className="p-4 bg-white rounded-lg shadow">
-      <h3 className="text-xl font-bold mb-4">New Event Banner</h3>
-      <input 
-        type="text" 
-        placeholder="Event Name" 
-        className="w-full p-2 mb-4 border rounded text-black"
-        value={eventName}
-        onChange={(e) => setEventName(e.target.value)}
-      />
-      <input 
-        type="file" 
-        accept="image/*"
-        className="w-full p-2 mb-4 text-sm"
-        onChange={(e) => setImageFile(e.target.files[0])}
-      />
-      <button 
-        disabled={isUploading}
-        className="w-full bg-blue-600 text-white p-3 rounded font-bold hover:bg-blue-700"
-      >
-        {isUploading ? "Uploading..." : "Upload & Publish"}
-      </button>
-    </form>
+    <div className="p-6 bg-white rounded-2xl shadow-xl border border-blue-50">
+      <h3 className="text-xl font-bold mb-6 text-blue-900 text-center">New Event Banner</h3>
+      
+      <form onSubmit={handleUpload} className="space-y-4">
+        {/* Event Name Input */}
+        <input 
+          type="text" 
+          placeholder="Enter Event Name" 
+          className="w-full p-3 border rounded-lg text-black outline-none focus:ring-2 focus:ring-blue-500"
+          value={eventName}
+          onChange={(e) => setEventName(e.target.value)}
+        />
+
+        {/* File Input */}
+        <div className="flex flex-col items-center justify-center border-2 border-dashed border-blue-200 rounded-lg p-4 bg-blue-50">
+          <input 
+            type="file" 
+            accept="image/*"
+            ref={fileInputRef}
+            className="hidden" // Hide the ugly default input
+            id="banner-upload"
+            onChange={handleFileChange}
+          />
+          <label 
+            htmlFor="banner-upload" 
+            className="cursor-pointer bg-blue-600 text-white px-4 py-2 rounded-lg font-medium hover:bg-blue-700 transition"
+          >
+            Select Image
+          </label>
+          
+          {/* Image Preview */}
+          {previewUrl && (
+            <div className="mt-4 w-full max-w-[200px] h-[120px] rounded-lg overflow-hidden shadow-md">
+              <img src={previewUrl} alt="Preview" className="w-full h-full object-cover" />
+            </div>
+          )}
+          
+          <p className="text-xs text-blue-400 mt-2">
+            {imageFile ? imageFile.name : "No file chosen (PNG, JPG, WEBP)"}
+          </p>
+        </div>
+
+        {/* Submit Button */}
+        <button 
+          disabled={isUploading}
+          className="w-full bg-blue-800 text-white p-3 rounded-lg font-bold hover:bg-blue-900 transition disabled:bg-slate-400"
+        >
+          {isUploading ? "Uploading to Server..." : "Upload & Publish Banner"}
+        </button>
+      </form>
+    </div>
   );
 }
