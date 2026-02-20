@@ -1,12 +1,8 @@
-
-
-
-
 "use client"
 import {motion} from "framer-motion"
 const Loader = () => {
   return (
-     <div className="flex items-center justify-center">   
+     <div className="flex items-center justify-center w-full h-full bg-blue-50">   
       <motion.div
         className="relative w-16 h-16 border-4 border-t-4 justify-center border-blue-600
          border-solid rounded-full"

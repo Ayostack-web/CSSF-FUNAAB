@@ -1,158 +1,190 @@
 "use client";
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "../utils/supabase/client";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Card, CardContent } from "@/components/ui/card";
+import { Trash2, Loader2, Plus, Image as ImageIcon } from "lucide-react";
 
 export default function BannerAdmin() {
   const [banners, setBanners] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [uploading, setUploading] = useState(false);
   const [eventName, setEventName] = useState("");
-  const [imageFile, setImageFile] = useState(null);
-  const [previewUrl, setPreviewUrl] = useState(null);
-  const [isUploading, setIsUploading] = useState(false);
-  const [deletingId, setDeletingId] = useState(null);
-  
-  const fileInputRef = useRef(null);
+  const [file, setFile] = useState(null);
   const supabase = createClient();
 
-  const fetchBanners = async () => {
-    const { data } = await supabase
-      .from("banners")
-      .select("*")
-      .order("created_at", { ascending: false });
-    setBanners(data || []);
-  };
-
+  // 1. Fetch all banners on load
   useEffect(() => {
     fetchBanners();
   }, []);
 
-  const handleFileChange = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setImageFile(file);
-      setPreviewUrl(URL.createObjectURL(file));
-    }
-  };
+  async function fetchBanners() {
+    const { data, error } = await supabase
+      .from("banners")
+      .select("*")
+      .order("created_at", { ascending: false });
+    
+    if (error) console.error("Error fetching banners:", error);
+    setBanners(data || []);
+  }
 
+  // 2. Handle Image Upload & Database Insert
   const handleUpload = async (e) => {
     e.preventDefault();
-    if (!imageFile || !eventName) return alert("Please select a file and enter a name.");
+    if (!file || !eventName) return alert("Please provide both name and image");
 
-    setIsUploading(true);
+    setUploading(true);
     try {
-      const fileExt = imageFile.name.split('.').pop();
-      const filePath = `banners/${Date.now()}.${fileExt}`;
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${Math.random()}.${fileExt}`;
+      // Upload directly to the bucket root
+      const filePath = fileName; 
 
+      // --- STEP A: UPLOAD TO STORAGE ---
       const { error: uploadError } = await supabase.storage
-        .from("event-banners")
-        .upload(filePath, imageFile);
+        .from("event-banners") // Bucket name must be exact
+        .upload(filePath, file);
+
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage.from("event-banners").getPublicUrl(filePath);
+      // --- STEP B: GET THE FULL PUBLIC LINK ---
+      const { data: urlData } = supabase.storage
+        .from("event-banners") // Must match the bucket above
+        .getPublicUrl(filePath);
+      
+      const publicUrl = urlData.publicUrl;
 
-      const { error: dbError } = await supabase.from("banners").insert([{ 
-        event_name: eventName, 
-        image_url: publicUrl,
-        storage_path: filePath 
-      }]);
+      // --- STEP C: INSERT INTO DATABASE ---
+      const { error: dbError } = await supabase.from("banners").insert([
+        { 
+          event_name: eventName, 
+          image_url: publicUrl 
+        }
+      ]);
 
       if (dbError) throw dbError;
 
-      alert("Banner uploaded successfully!");
+      // SUCCESS: Reset form and refresh
       setEventName("");
-      setImageFile(null);
-      setPreviewUrl(null);
-      if (fileInputRef.current) fileInputRef.current.value = "";
-      fetchBanners();
-    } catch (err) {
-      alert(err.message);
+      setFile(null);
+      fetchBanners(); 
+      alert("Banner added successfully!");
+    } catch (error) {
+      console.error("Upload process failed:", error);
+      alert(error.message);
     } finally {
-      setIsUploading(false);
+      setUploading(false);
     }
   };
 
-  const handleDelete = async (id, storagePath) => {
+  // 3. Handle Delete
+  const handleDelete = async (id, imageUrl) => {
     if (!confirm("Are you sure you want to delete this banner?")) return;
-    setDeletingId(id);
+
+    setLoading(true);
     try {
-      if (storagePath) {
-        await supabase.storage.from("event-banners").remove([storagePath]);
-      }
-      await supabase.from("banners").delete().eq("id", id);
-      fetchBanners();
-    } catch (err) {
-      alert("Error deleting: " + err.message);
+      // Extract the filename from the URL to delete from storage
+      const path = imageUrl.split("/").pop();
+      await supabase.storage.from("event-banners").remove([path]);
+
+      const { error } = await supabase.from("banners").delete().eq("id", id);
+      if (error) throw error;
+
+      setBanners(banners.filter((b) => b.id !== id));
+    } catch (error) {
+      alert(error.message);
     } finally {
-      setDeletingId(null);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4 space-y-8">
-      <form onSubmit={handleUpload} className="p-6 bg-white rounded-xl shadow-md border border-blue-100">
-        <h3 className="text-xl font-bold mb-4 text-blue-900">Add New Event Banner</h3>
-        
-        <div className="space-y-4">
-          <input 
-            type="text" placeholder="Event Name (e.g. Sunday Service)" 
-            value={eventName}
-            onChange={(e) => setEventName(e.target.value)}
-            className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none"
-          />
-          
-          {/* MOBILE FRIENDLY UPLOAD BOX */}
-          <div className="flex flex-col items-center justify-center border-2 border-dashed border-blue-100 rounded-lg p-6 bg-blue-50">
-              <input  
-          type="file" 
-          accept="image/*" 
-          // Removing capture="environment" allows the phone to show the "Gallery" option
-          ref={fileInputRef} 
-       onChange={handleFileChange}
-  className="hidden"
-  id="banner-upload"
-/>
+    <div className="max-w-6xl mx-auto p-4 space-y-8">
+      <div className="flex flex-col gap-2">
+        <h1 className="text-2xl font-bold text-blue-900">Banner Management</h1>
+        <p className="text-sm text-slate-500">Upload images for the homepage carousel.</p>
+      </div>
 
-            <label 
-              htmlFor="banner-upload" 
-              className="cursor-pointer bg-blue-600 text-white px-6 py-3 rounded-full font-bold hover:bg-blue-700 transition shadow-lg active:scale-95"
-            >
-              {imageFile ? "Change Image" : "Select or Take Photo"}
-            </label>
-
-            {previewUrl && (
-              <div className="mt-4 relative w-full max-w-[300px] h-40 rounded-lg overflow-hidden shadow-inner bg-white border">
-                <img src={previewUrl} alt="Preview" className="w-full h-full object-contain" />
-              </div>
-            )}
-            <p className="mt-2 text-xs text-blue-400">{imageFile ? imageFile.name : "Tap to open camera or gallery"}</p>
-          </div>
-
-          <button 
-            disabled={isUploading} 
-            className="w-full bg-blue-800 text-white p-4 rounded-lg font-bold hover:bg-blue-900 transition disabled:bg-gray-400 shadow-md"
-          >
-            {isUploading ? "Uploading..." : "Publish to Website"}
-          </button>
-        </div>
-      </form>
-
-      {/* MANAGE SECTION */}
-      <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-        <h3 className="text-xl font-bold mb-4 text-blue-900">Live Banners</h3>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          {banners.map((banner) => (
-            <div key={banner.id} className="border rounded-xl p-4 flex flex-col items-center bg-slate-50 shadow-sm">
-              <img src={banner.image_url} alt={banner.event_name} className="w-full h-40 object-cover rounded-lg mb-3" />
-              <p className="font-bold text-gray-800 text-center">{banner.event_name}</p>
-              <button 
-                onClick={() => handleDelete(banner.id, banner.storage_path)}
-                disabled={deletingId === banner.id}
-                className="mt-3 text-red-600 text-sm font-bold bg-red-50 px-4 py-2 rounded-lg hover:bg-red-600 hover:text-white transition w-full border border-red-100"
-              >
-                {deletingId === banner.id ? "Deleting..." : "Delete Banner"}
-              </button>
+      {/* Upload Form */}
+      <Card className="border-2 border-dashed border-blue-200 bg-blue-50/30">
+        <CardContent className="pt-6">
+          <form onSubmit={handleUpload} className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-blue-900 ml-1">Event Name</label>
+              <Input 
+                placeholder="e.g. Sunday Service" 
+                value={eventName}
+                onChange={(e) => setEventName(e.target.value)}
+                className="bg-white"
+                required
+              />
             </div>
-          ))}
-        </div>
+            
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-blue-900 ml-1">Banner Image</label>
+              <div className="flex gap-2">
+                <Input 
+                  type="file" 
+                  accept="image/*"
+                  onChange={(e) => setFile(e.target.files[0])}
+                  className="bg-white"
+                  required
+                />
+              </div>
+            </div>
+
+            <Button disabled={uploading} className="bg-blue-700 hover:bg-blue-800 w-full">
+              {uploading ? (
+                <>
+                  <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                  Uploading...
+                </>
+              ) : (
+                <>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add New Banner
+                </>
+              )}
+            </Button>
+          </form>
+        </CardContent>
+      </Card>
+
+      {/* Current Banners Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+        {banners.length === 0 && !uploading && (
+          <div className="col-span-full py-12 text-center border-2 border-dashed rounded-xl text-slate-400">
+            <ImageIcon className="mx-auto h-12 w-12 mb-2 opacity-20" />
+            <p>No banners found. Upload one to get started.</p>
+          </div>
+        )}
+
+        {banners.map((banner) => (
+          <div key={banner.id} className="relative group rounded-xl overflow-hidden shadow-md border-2 border-white bg-white transition-all hover:shadow-xl">
+            <div className="aspect-video w-full overflow-hidden bg-slate-100">
+              <img 
+                src={banner.image_url} 
+                className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105" 
+                alt={banner.event_name} 
+              />
+            </div>
+            <div className="p-3 flex justify-between items-center bg-white">
+              <span className="font-bold text-sm text-blue-900 uppercase truncate pr-2">
+                {banner.event_name}
+              </span>
+              <Button 
+                variant="destructive" 
+                size="icon" 
+                onClick={() => handleDelete(banner.id, banner.image_url)}
+                className="h-8 w-8"
+                disabled={loading}
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </div>
+          </div>
+        ))}
       </div>
     </div>
   );

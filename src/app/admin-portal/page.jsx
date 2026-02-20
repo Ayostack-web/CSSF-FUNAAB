@@ -11,15 +11,21 @@ export default function AdminDashboardPage() {
   // --- Verification State ---
   const [isAdmin, setIsAdmin] = useState(false);
   const [passkey, setPasskey] = useState("");
-  const SECRET_KEY = "CSSF_GATE_777"; 
+
 
   // --- Upload Form State (Sermons) ---
   const [title, setTitle] = useState("");
   const [link, setLink] = useState("");
   const [loading, setLoading] = useState(false);
+
+  // --- Upload Form State (Worship) ---
+  const [worshipTitle, setWorshipTitle] = useState("");
+  const [worshipImage, setWorshipImage] = useState(null);
+  const [worshipLoading, setWorshipLoading] = useState(false);
   
   // --- Dashboard State ---
   const [sermons, setSermons] = useState([]);
+  const [worship, setWorship] = useState([]);
   
   const supabase = createClient();
 
@@ -32,20 +38,38 @@ export default function AdminDashboardPage() {
     setSermons(data || []);
   };
 
+  // Fetch worship gallery
+  const fetchWorship = async () => {
+    const { data } = await supabase
+      .from("worship_images")
+      .select("*")
+      .order("order", { ascending: true });
+    setWorship(data || []);
+  };
+
   useEffect(() => {
     if (isAdmin) {
       fetchSermons();
+      fetchWorship();
     }
   }, [isAdmin]);
 
   const handleLogin = (e) => {
     e.preventDefault();
-    if (passkey === SECRET_KEY) {
+    if (passkey === process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
       setIsAdmin(true);
     } else {
       alert("Incorrect Access Key");
     }
   };
+
+
+
+
+
+
+
+
 
   const handlePublish = async (e) => {
     e.preventDefault();
@@ -73,6 +97,61 @@ export default function AdminDashboardPage() {
       const { error } = await supabase.from("sermons").delete().eq("id", id);
       if (error) alert("Error deleting: " + error.message);
       else fetchSermons(); 
+    }
+  };
+
+  // ===== WORSHIP IMAGE HANDLERS =====
+  const handleWorshipUpload = async (e) => {
+    e.preventDefault();
+    if (!worshipTitle || !worshipImage) return alert("Please provide both a title and an image.");
+
+    setWorshipLoading(true);
+
+    try {
+      // Step 1: Upload image to Supabase Storage
+      const fileName = `worship-${Date.now()}-${worshipImage.name}`;
+      const { data: uploadData, error: uploadError } = await supabase.storage
+        .from("worship_images")
+        .upload(fileName, worshipImage);
+
+      if (uploadError) throw uploadError;
+
+      // Step 2: Get public URL for the uploaded image
+      const { data } = supabase.storage
+        .from("worship_images")
+        .getPublicUrl(fileName);
+
+      const imageUrl = data.publicUrl;
+
+      // Step 3: Insert record into worship table via server API (server uses service role)
+      const apiRes = await fetch('/api/worship/upload', {
+        method: 'POST',
+        headers: { 
+          'Content-Type': 'application/json',
+          'x-admin-passkey': passkey || ''
+        },
+        body: JSON.stringify({ title: worshipTitle, image_url: imageUrl, order: worship.length + 1 })
+      })
+
+      const apiData = await apiRes.json()
+      if (!apiRes.ok) throw new Error(apiData.error || 'Server insert failed')
+
+      alert('Worship image uploaded successfully!')
+      setWorshipTitle('')
+      setWorshipImage(null)
+      fetchWorship()
+    } catch (error) {
+      alert("Error uploading: " + error.message);
+    } finally {
+      setWorshipLoading(false);
+    }
+  };
+
+  const handleDeleteWorship = async (id) => {
+    if (confirm("Are you sure you want to delete this worship image?")) {
+      const { error } = await supabase.from("worship_images").delete().eq("id", id);
+      if (error) alert("Error deleting: " + error.message);
+      else fetchWorship();
     }
   };
 
@@ -160,6 +239,54 @@ export default function AdminDashboardPage() {
                   </div>
                 ))}
                 {sermons.length === 0 && <p className="text-gray-400 text-sm">No sermons found.</p>}
+              </div>
+            </div>
+
+            <div className="bg-white p-8 rounded-2xl shadow-xl border border-blue-100">
+              <h2 className="text-2xl font-bold text-blue-900 mb-6">Upload Worship Image</h2>
+              <form onSubmit={handleWorshipUpload} className="space-y-5">
+                <input 
+                  type="text" 
+                  placeholder="Image Title"
+                  className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none"
+                  value={worshipTitle} 
+                  onChange={(e) => setWorshipTitle(e.target.value)}
+                />
+                <div className="relative">
+                  <input 
+                    type="file" 
+                    accept="image/*"
+                    className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none file:bg-blue-100 file:text-blue-900 file:px-3 file:py-1 file:rounded file:cursor-pointer file:border-0"
+                    onChange={(e) => setWorshipImage(e.target.files?.[0] || null)}
+                  />
+                </div>
+                <button 
+                  disabled={worshipLoading}
+                  className="w-full bg-blue-700 text-white py-3 rounded-lg font-bold hover:bg-blue-800 transition disabled:bg-gray-400"
+                >
+                  {worshipLoading ? "Uploading..." : "Upload Image"}
+                </button>
+              </form>
+            </div>
+
+            <div className="bg-white p-8 rounded-2xl shadow-xl border border-blue-100">
+              <h2 className="text-xl font-bold text-blue-900 mb-4">Worship Images</h2>
+              <div className="divide-y divide-gray-100">
+                {worship.map((item) => (
+                  <div key={item.id} className="py-3 flex justify-between items-center">
+                    <div>
+                      <p className="font-medium text-gray-800">{item.title}</p>
+                      <p className="text-xs text-gray-400">{new Date(item.created_at).toLocaleDateString()}</p>
+                    </div>
+                    <button 
+                      onClick={() => handleDeleteWorship(item.id)}
+                      className="bg-red-50 text-red-600 px-3 py-1 rounded-md text-sm hover:bg-red-100 transition"
+                    >
+                      Delete
+                    </button>
+                  </div>
+                ))}
+                {worship.length === 0 && <p className="text-gray-400 text-sm">No worship images found.</p>}
               </div>
             </div>
           </div>
