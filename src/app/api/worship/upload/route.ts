@@ -8,14 +8,18 @@ export async function POST(req: Request) {
     const body = await req.json()
     const { title, image_url, order } = body
 
-    // Require service role key in server env to perform inserts that RLS would block
+    // 1. Check Environment Variables
     const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY
+    
     if (!supabaseUrl || !serviceKey) {
-      return NextResponse.json({ error: 'Server misconfigured: missing SUPABASE_SERVICE_ROLE_KEY or SUPABASE_URL' }, { status: 500 })
+      return NextResponse.json(
+        { error: 'Server misconfigured: missing SUPABASE_SERVICE_ROLE_KEY or SUPABASE_URL' }, 
+        { status: 500 }
+      )
     }
 
-    // Basic server-side passkey protection: accept either SUPABASE_UPLOAD_PASSKEY or NEXT_PUBLIC_ADMIN_PASSWORD
+    // 2. Passkey Validation
     const expectedPass = process.env.SUPABASE_UPLOAD_PASSKEY || process.env.NEXT_PUBLIC_ADMIN_PASSWORD
     if (expectedPass) {
       const provided = req.headers.get('x-admin-passkey') || ''
@@ -24,14 +28,23 @@ export async function POST(req: Request) {
       }
     }
 
+    // 3. Initialize Supabase Admin Client
     const supabase = createClient(supabaseUrl, serviceKey)
 
-    const { error } = await supabase.from('worship_images').insert([{ title, image_url, order }])
-    if (error) return NextResponse.json({ error: error.message }, { status: 500 })
+    // 4. Insert into Database Table
+    const { error: dbError } = await supabase
+      .from('worship_images')
+      .insert([{ title, image_url, order }])
+
+    if (dbError) {
+      return NextResponse.json({ error: dbError.message }, { status: 500 })
+    }
 
     return NextResponse.json({ success: true })
+
   } catch (err: unknown) {
-    const message = err instanceof Error ? err.message : String(err)
-    return NextResponse.json({ error: message }, { status: 500 })
+    // FIX: This section solves the "Unexpected any" error
+    const errorMessage = err instanceof Error ? err.message : String(err)
+    return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }
