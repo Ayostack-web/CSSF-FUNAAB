@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import { createClient } from "../utils/supabase/client";
-import BannerAdmin from "../component/BannerAdmin"; 
+import BannerAdmin from "../component/BannerAdmin";
 
 export const dynamic = "force-dynamic";
 export const fetchCache = "force-no-store";
@@ -20,14 +20,13 @@ export default function AdminDashboardPage() {
   const [worshipTitle, setWorshipTitle] = useState("");
   const [worshipImage, setWorshipImage] = useState(null);
   const [worshipLoading, setWorshipLoading] = useState(false);
-  
+
   // --- Dashboard State ---
   const [sermons, setSermons] = useState([]);
   const [worship, setWorship] = useState([]);
-  
+
   const supabase = createClient();
 
-  // Fetch sermons for the admin list
   const fetchSermons = async () => {
     const { data } = await supabase
       .from("sermons")
@@ -36,7 +35,6 @@ export default function AdminDashboardPage() {
     setSermons(data || []);
   };
 
-  // Fetch worship gallery
   const fetchWorship = async () => {
     const { data } = await supabase
       .from("worship_images")
@@ -78,7 +76,7 @@ export default function AdminDashboardPage() {
       alert("Sermon Published successfully!");
       setTitle("");
       setLink("");
-      fetchSermons(); 
+      fetchSermons();
     }
   };
 
@@ -86,17 +84,15 @@ export default function AdminDashboardPage() {
     if (confirm("Are you sure you want to delete this sermon?")) {
       const { error } = await supabase.from("sermons").delete().eq("id", id);
       if (error) alert("Error deleting: " + error.message);
-      else fetchSermons(); 
+      else fetchSermons();
     }
   };
 
-  // ===== WORSHIP IMAGE HANDLERS =====
   const handleWorshipUpload = async (e) => {
     e.preventDefault();
     if (!worshipTitle || !worshipImage) return alert("Please provide both a title and an image.");
 
     setWorshipLoading(true);
-
     try {
       const fileName = `worship-${Date.now()}-${worshipImage.name}`;
       const { error: uploadError } = await supabase.storage
@@ -113,7 +109,7 @@ export default function AdminDashboardPage() {
 
       const apiRes = await fetch('/api/worship/upload', {
         method: 'POST',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
           'x-admin-passkey': passkey || ''
         },
@@ -155,14 +151,15 @@ export default function AdminDashboardPage() {
     }
   };
 
+  // --- Rendering ---
   if (!isAdmin) {
     return (
       <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <div className="bg-white p-8 rounded-2xl shadow-xl border border-blue-100 w-full max-w-md">
           <h2 className="text-xl font-bold text-blue-900 mb-4 text-center">Admin Verification</h2>
           <form onSubmit={handleLogin} className="space-y-4">
-            <input 
-              type="password" 
+            <input
+              type="password"
               placeholder="Enter Secret Access Key"
               className="w-full p-3 border rounded-lg text-black outline-none focus:ring-2 focus:ring-blue-500"
               value={passkey}
@@ -185,8 +182,8 @@ export default function AdminDashboardPage() {
             <h1 className="text-3xl font-bold text-blue-900">CSSF Admin Dashboard</h1>
             <p className="text-slate-500">Manage your website content in real-time.</p>
           </div>
-          <button 
-            onClick={() => setIsAdmin(false)} 
+          <button
+            onClick={() => setIsAdmin(false)}
             className="bg-red-500 text-white px-6 py-2 rounded-lg font-bold shadow-md hover:bg-red-600 transition"
           >
             Logout
@@ -198,21 +195,21 @@ export default function AdminDashboardPage() {
             <div className="bg-white p-8 rounded-2xl shadow-xl border border-blue-100">
               <h2 className="text-2xl font-bold text-blue-900 mb-6">Upload Sermon</h2>
               <form onSubmit={handlePublish} className="space-y-5">
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   placeholder="Sermon Title"
                   className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none"
-                  value={title} 
+                  value={title}
                   onChange={(e) => setTitle(e.target.value)}
                 />
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   placeholder="Google Drive Link"
                   className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none"
-                  value={link} 
+                  value={link}
                   onChange={(e) => setLink(e.target.value)}
                 />
-                <button 
+                <button
                   disabled={loading}
                   className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition"
                 >
@@ -230,7 +227,7 @@ export default function AdminDashboardPage() {
                       <p className="font-medium text-gray-800">{sermon.title}</p>
                       <p className="text-xs text-gray-400">{new Date(sermon.created_at).toLocaleDateString()}</p>
                     </div>
-                    <button 
+                    <button
                       onClick={() => handleDelete(sermon.id)}
                       className="bg-red-50 text-red-600 px-3 py-1 rounded-md text-sm hover:bg-red-100 transition"
                     >
@@ -245,22 +242,22 @@ export default function AdminDashboardPage() {
             <div className="bg-white p-8 rounded-2xl shadow-xl border border-blue-100">
               <h2 className="text-2xl font-bold text-blue-900 mb-6">Upload Worship Image</h2>
               <form onSubmit={handleWorshipUpload} className="space-y-5">
-                <input 
-                  type="text" 
+                <input
+                  type="text"
                   placeholder="Image Title"
                   className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none"
-                  value={worshipTitle} 
+                  value={worshipTitle}
                   onChange={(e) => setWorshipTitle(e.target.value)}
                 />
                 <div className="relative">
-                  <input 
-                    type="file" 
+                  <input
+                    type="file"
                     accept="image/*"
                     className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none file:bg-blue-100 file:text-blue-900 file:px-3 file:py-1 file:rounded file:cursor-pointer file:border-0"
                     onChange={(e) => setWorshipImage(e.target.files?.[0] || null)}
                   />
                 </div>
-                <button 
+                <button
                   disabled={worshipLoading}
                   className="w-full bg-blue-700 text-white py-3 rounded-lg font-bold hover:bg-blue-800 transition disabled:bg-gray-400"
                 >
@@ -278,7 +275,7 @@ export default function AdminDashboardPage() {
                       <p className="font-medium text-gray-800">{item.title}</p>
                       <p className="text-xs text-gray-400">{new Date(item.created_at).toLocaleDateString()}</p>
                     </div>
-                    <button 
+                    <button
                       onClick={() => handleDeleteWorship(item.id)}
                       className="bg-red-50 text-red-600 px-3 py-1 rounded-md text-sm hover:bg-red-100 transition"
                     >
@@ -292,8 +289,8 @@ export default function AdminDashboardPage() {
           </div>
 
           <div className="space-y-4">
-             <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest ml-2">Event Banners</h3>
-             <BannerAdmin /> 
+            <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest ml-2">Event Banners</h3>
+            <BannerAdmin />
           </div>
         </div>
       </div>
