@@ -148,11 +148,26 @@ export default function AdminDashboardPage() {
   };
 
   const handleDeleteWorship = async (id) => {
-    if (confirm("Are you sure you want to delete this worship image?")) {
-      const { error } = await supabase.from("worship_images").delete().eq("id", id);
-      if (error) alert("Error deleting: " + error.message);
-      else fetchWorship();
+    if (!confirm("Are you sure you want to delete this worship image?")) return;
+
+    try {
+      // get the item to extract image_url for storage deletion
+      const item = worship.find((w) => w.id === id)
+      const image_url = item?.image_url || null
+
+      const res = await fetch('/api/worship/delete', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'x-admin-passkey': passkey || '' },
+        body: JSON.stringify({ id, image_url })
+      })
+
+      const data = await res.json()
+      if (!res.ok) throw new Error(data.error || 'Delete failed')
+      fetchWorship()
+    } catch (err) {
+      alert('Error deleting: ' + (err?.message || String(err)))
     }
+  }
   };
 
   if (!isAdmin) {
