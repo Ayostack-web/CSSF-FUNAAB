@@ -55,15 +55,22 @@ export default function BannerAdmin() {
       
       const publicUrl = urlData.publicUrl;
 
-      // --- STEP C: INSERT INTO DATABASE ---
-      const { error: dbError } = await supabase.from("banners").insert([
-        { 
-          event_name: eventName, 
-          image_url: publicUrl 
-        }
-      ]);
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token || "";
+      if (!accessToken) throw new Error("Please login again");
 
-      if (dbError) throw dbError;
+      // --- STEP C: INSERT INTO DATABASE VIA SERVER API ---
+      const apiRes = await fetch('/api/banner/upload', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({ event_name: eventName, image_url: publicUrl })
+      });
+
+      const apiData = await apiRes.json();
+      if (!apiRes.ok) throw new Error(apiData.error || 'Failed to save banner');
 
       // SUCCESS: Reset form and refresh
       setEventName("");
@@ -84,12 +91,21 @@ export default function BannerAdmin() {
 
     setLoading(true);
     try {
-      // Extract the filename from the URL to delete from storage
-      const path = imageUrl.split("/").pop();
-      await supabase.storage.from("event-banners").remove([path]);
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token || "";
+      if (!accessToken) throw new Error("Please login again");
 
-      const { error } = await supabase.from("banners").delete().eq("id", id);
-      if (error) throw error;
+      const res = await fetch('/api/banner/delete', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`
+        },
+        body: JSON.stringify({ id, image_url: imageUrl })
+      });
+
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || 'Delete failed');
 
       setBanners(banners.filter((b) => b.id !== id));
     } catch (error) {

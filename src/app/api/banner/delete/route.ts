@@ -3,19 +3,36 @@ import { createClient } from '@supabase/supabase-js';
 
 export const runtime = 'nodejs';
 
+function getStoragePathFromUrl(imageUrl: string) {
+  try {
+    const parsed = new URL(imageUrl);
+    const marker = '/event-banners/';
+    const idx = parsed.pathname.indexOf(marker);
+    if (idx !== -1) {
+      return decodeURIComponent(parsed.pathname.slice(idx + marker.length));
+    }
+    const fallback = parsed.pathname.split('/').pop() || '';
+    return decodeURIComponent(fallback);
+  } catch {
+    return imageUrl.split('/').pop() || '';
+  }
+}
+
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const { title, image_url, order } = body;
+    const { id, image_url } = await req.json();
 
-    // 1. Check Environment Variables
+    if (!id) {
+      return NextResponse.json({ error: 'Missing banner id' }, { status: 400 });
+    }
+
     const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    
+
     if (!supabaseUrl || !serviceKey || !anonKey) {
       return NextResponse.json(
-        { error: 'Server misconfigured: missing SUPABASE_SERVICE_ROLE_KEY, NEXT_PUBLIC_SUPABASE_ANON_KEY, or SUPABASE_URL' }, 
+        { error: 'Server misconfigured: missing SUPABASE_SERVICE_ROLE_KEY, NEXT_PUBLIC_SUPABASE_ANON_KEY, or SUPABASE_URL' },
         { status: 500 }
       );
     }
@@ -35,23 +52,33 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Forbidden: admin email required' }, { status: 403 });
     }
 
-    // 3. Initialize Supabase Admin Client
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    // 4. Insert into Database Table
     const { error: dbError } = await supabase
-      .from('worship_images')
-      .insert([{ title, image_url, order: order || 0 }]);
+      .from('banners')
+      .delete()
+      .eq('id', id);
 
     if (dbError) {
       return NextResponse.json({ error: dbError.message }, { status: 500 });
     }
 
-    return NextResponse.json({ success: true });
+    if (image_url) {
+      const filePath = getStoragePathFromUrl(image_url);
+      if (filePath) {
+        const { error: storageError } = await supabase.storage
+          .from('event-banners')
+          .remove([filePath]);
 
-  } catch (err: unknown) {
-    // Standardizing the error message for TypeScript/Vercel
-    const errorMessage = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+        if (storageError) {
+          console.error('Banner storage deletion error:', storageError);
+        }
+      }
+    }
+
+    return NextResponse.json({ success: true });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

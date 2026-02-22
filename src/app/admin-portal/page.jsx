@@ -210,11 +210,15 @@ export default function AdminDashboardPage() {
 
       const imageUrl = data.publicUrl;
 
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token || "";
+      if (!accessToken) throw new Error('Please login again');
+
       const apiRes = await fetch('/api/worship/upload', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'x-admin-passkey': passkey || ''
+          Authorization: `Bearer ${accessToken}`
         },
         body: JSON.stringify({ title: worshipTitle, image_url: imageUrl, order: worship.length + 1 })
       });
@@ -240,9 +244,13 @@ export default function AdminDashboardPage() {
       const item = worship.find((w) => w.id === id);
       const image_url = item?.image_url || null;
 
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token || "";
+      if (!accessToken) throw new Error('Please login again');
+
       const res = await fetch('/api/worship/delete', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'x-admin-passkey': passkey || '' },
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${accessToken}` },
         body: JSON.stringify({ id, image_url })
       });
 
