@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 import { promises as fs } from 'fs';
 import path from 'path';
 
@@ -15,7 +16,7 @@ export async function GET() {
   }
 }
 
-export async function POST(request) {
+export async function POST(request: NextRequest) {
   try {
     const { accountName = '', accountNumber = '', bank = '' } = await request.json();
     await fs.writeFile(ACCOUNT_FILE, JSON.stringify({ accountName, accountNumber, bank }), 'utf-8');
