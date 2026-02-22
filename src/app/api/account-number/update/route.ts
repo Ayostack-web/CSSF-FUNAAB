@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
     await fs.writeFile(ACCOUNT_FILE, JSON.stringify({ accountName, accountNumber, bank }), 'utf-8');
     return NextResponse.json({ success: true, accountName, accountNumber, bank });
   } catch (error) {
-    return NextResponse.json({ success: false, error: error.message });
+    const message = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ success: false, error: message });
   }
 }
