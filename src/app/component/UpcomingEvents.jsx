@@ -1,6 +1,5 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
-import { createClient } from "../utils/supabase/client";
 import Autoplay from "embla-carousel-autoplay";
 import { 
   Carousel, 
@@ -11,13 +10,11 @@ import {
 } from "@/components/ui/carousel";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 
-export default function UpcomingEvents() {
-  const [events, setEvents] = useState([]);
+export default function UpcomingEvents({ serverEvents = [] }) {
+  const [events] = useState(serverEvents);
   const [api, setApi] = useState(null);
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
-
-  const supabase = createClient();
   
   const plugin = useRef(
     Autoplay({ delay: 4000, stopOnInteraction: true })
@@ -31,36 +28,6 @@ export default function UpcomingEvents() {
       setCurrent(api.selectedScrollSnap());
     });
   }, [api]);
-
-  useEffect(() => {
-    const fetchEvents = async () => {
-      try {
-        const { data, error } = await supabase
-          .from("banners")
-          .select("*")
-          .order("created_at", { ascending: false });
-
-        if (error) {
-          console.error("❌ Supabase fetch error:", error);
-          console.error("Supabase error details:", {
-            message: error?.message ?? String(error),
-            details: error?.details ?? null,
-            hint: error?.hint ?? null,
-            code: error?.code ?? null,
-            status: error?.status ?? null,
-          });
-          setEvents([]);
-        } else {
-          console.log("✅ Fetched events:", data);
-          setEvents(data || []);
-        }
-      } catch (err) {
-        console.error("❌ Unexpected fetch error:", err);
-        setEvents([]);
-      }
-    };
-    fetchEvents();
-  }, [supabase]);
 
   if (events.length === 0) return null;
 
