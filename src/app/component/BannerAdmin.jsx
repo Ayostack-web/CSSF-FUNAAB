@@ -17,16 +17,35 @@ export default function BannerAdmin() {
   // 1. Fetch all banners on load
   useEffect(() => {
     fetchBanners();
+
+    const { data: authListener } = supabase.auth.onAuthStateChange((event) => {
+      if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+        fetchBanners();
+      }
+    });
+
+    return () => {
+      authListener?.subscription?.unsubscribe();
+    };
   }, []);
 
   async function fetchBanners() {
-    const { data, error } = await supabase
-      .from("banners")
-      .select("*")
-      .order("created_at", { ascending: false });
-    
-    if (error) console.error("Error fetching banners:", error);
-    setBanners(data || []);
+    try {
+      const res = await fetch(`/api/banner/list?t=${Date.now()}`, {
+        method: 'GET',
+        cache: 'no-store'
+      });
+
+      const payload = await res.json();
+      if (!res.ok) {
+        throw new Error(payload.error || 'Failed to fetch banners');
+      }
+
+      setBanners(payload.banners || []);
+    } catch (error) {
+      console.error("Error fetching banners:", error);
+      setBanners([]);
+    }
   }
 
   // 2. Handle Image Upload & Database Insert
@@ -107,7 +126,7 @@ export default function BannerAdmin() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Delete failed');
 
-      setBanners(banners.filter((b) => b.id !== id));
+      await fetchBanners();
     } catch (error) {
       alert(error.message);
     } finally {
