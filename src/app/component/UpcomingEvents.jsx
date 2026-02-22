@@ -34,17 +34,30 @@ export default function UpcomingEvents() {
 
   useEffect(() => {
     const fetchEvents = async () => {
-      const { data, error } = await supabase
-        .from("banners")
-        .select("*")
-        .order("created_at", { ascending: false });
-      
-      if (error) {
-        console.error("❌ Supabase fetch error:", error);
-      } else {
-        console.log("✅ Fetched events:", data);
+      try {
+        const { data, error } = await supabase
+          .from("banners")
+          .select("*")
+          .order("created_at", { ascending: false });
+
+        if (error) {
+          console.error("❌ Supabase fetch error:", error);
+          console.error("Supabase error details:", {
+            message: error?.message ?? String(error),
+            details: error?.details ?? null,
+            hint: error?.hint ?? null,
+            code: error?.code ?? null,
+            status: error?.status ?? null,
+          });
+          setEvents([]);
+        } else {
+          console.log("✅ Fetched events:", data);
+          setEvents(data || []);
+        }
+      } catch (err) {
+        console.error("❌ Unexpected fetch error:", err);
+        setEvents([]);
       }
-      setEvents(data || []);
     };
     fetchEvents();
   }, [supabase]);
