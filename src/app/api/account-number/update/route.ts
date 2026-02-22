@@ -5,7 +5,7 @@ import path from 'path';
 
 const ACCOUNT_FILE = path.resolve(process.cwd(), 'account-number.json');
 
-
+export async function GET() {
   try {
     const data = await fs.readFile(ACCOUNT_FILE, 'utf-8');
     const { accountName = '', accountNumber = '', bank = '' } = JSON.parse(data);
