@@ -1,16 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+
 
 export default function DonateCTA({ onClose }) {
   const [copiedAccount, setCopiedAccount] = useState(null); // State to track which account was copied
-  //const accountname = "Boluwatife Afusat Sanni";
-  //const accountNumber = "8105225778";
-  //const bankName = "OPAY";
+  const [accountName, setAccountName] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
+  const [bank, setBank] = useState("");
 
-  const accountname1 = "VANT(CSSF FUNAAB)";
-  const accountNumber1 = "9643608280";
-  const bankName1 = "Providus Bank Plc";
+  useEffect(() => {
+    const fetchAccountInfo = async () => {
+      try {
+        const res = await fetch("/api/account-number/update");
+        const data = await res.json();
+        setAccountName(data.accountName || "");
+        setAccountNumber(data.accountNumber || "");
+        setBank(data.bank || "");
+      } catch (e) {
+        setAccountName("");
+        setAccountNumber("");
+        setBank("");
+      }
+    };
+    fetchAccountInfo();
+  }, []);
 
   const copyToClipboard = async (accountNum) => {
     try {
@@ -42,20 +56,17 @@ export default function DonateCTA({ onClose }) {
           shaken together, and running over, shall men give into your bosom.
           (Luke 6:38)
         </p>
-     
- 
 
-        {/* Account Info 2 */}
+        {/* Account Info */}
         <div className="mb-6 flex justify-center items-center space-x-4">
           <span className="text-lg font-semibold text-blue-950">
-            Account: <span className="font-bold">{accountNumber1}</span> —{" "}
-            {bankName1} {accountname1}
+            Account: <span className="font-bold">{accountNumber || "-"}</span> — {bank || ""} {accountName || ""}
           </span>
           <button
-            onClick={() => copyToClipboard(accountNumber1)} // Pass the specific account number
+            onClick={() => copyToClipboard(accountNumber)}
             className="inline-block px-8 py-3 mt-3 text-lg font-semibold text-black bg-gradient-to-tr from-blue-300 to-teal-50 rounded-full shadow-lg hover:from-blue-900 hover:to-white hover:-translate-y-1 transition"
           >
-            {copiedAccount === accountNumber1 ? "Copied!" : "Copy"}
+            {copiedAccount === accountNumber ? "Copied!" : "Copy"}
           </button>
         </div>
 

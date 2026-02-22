@@ -3,13 +3,102 @@ import { useState, useEffect } from "react";
 import { createClient } from "../utils/supabase/client";
 import BannerAdmin from "../component/BannerAdmin";
 
-export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
-
 export default function AdminDashboardPage() {
-  // --- Verification State ---
+  // --- Account Info State ---
+  const [accountName, setAccountName] = useState("");
+  const [accountNumber, setAccountNumber] = useState("");
+  const [bank, setBank] = useState("");
+  const [accountNameInput, setAccountNameInput] = useState("");
+  const [accountNumberInput, setAccountNumberInput] = useState("");
+  const [bankInput, setBankInput] = useState("");
+  const [accountInfoLoading, setAccountInfoLoading] = useState(false);
+  const [accountInfoMessage, setAccountInfoMessage] = useState("");
+
+  // Fetch account info from API
+  const fetchAccountInfo = async () => {
+    try {
+      setAccountInfoLoading(true);
+      const res = await fetch("/api/account-number/update");
+      const data = await res.json();
+      setAccountName(data.accountName || "");
+      setAccountNumber(data.accountNumber || "");
+      setBank(data.bank || "");
+      setAccountNameInput(data.accountName || "");
+      setAccountNumberInput(data.accountNumber || "");
+      setBankInput(data.bank || "");
+    } catch (e) {
+      setAccountName("");
+      setAccountNumber("");
+      setBank("");
+      setAccountNameInput("");
+      setAccountNumberInput("");
+      setBankInput("");
+    } finally {
+      setAccountInfoLoading(false);
+    }
+  };
+
+  // Update account info via API
+  const handleAccountInfoUpdate = async (e) => {
+    e.preventDefault();
+    setAccountInfoLoading(true);
+    setAccountInfoMessage("");
+    try {
+      const res = await fetch("/api/account-number/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accountName: accountNameInput, accountNumber: accountNumberInput, bank: bankInput })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAccountName(accountNameInput);
+        setAccountNumber(accountNumberInput);
+        setBank(bankInput);
+        setAccountInfoMessage("Account info updated successfully.");
+      } else {
+        setAccountInfoMessage("Failed to update account info.");
+      }
+    } catch (e) {
+      setAccountInfoMessage("Error updating account info.");
+    } finally {
+      setAccountInfoLoading(false);
+    }
+  };
+
+  // Delete (clear) account info
+  const handleAccountInfoDelete = async () => {
+    setAccountInfoLoading(true);
+    setAccountInfoMessage("");
+    try {
+      const res = await fetch("/api/account-number/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ accountName: "", accountNumber: "", bank: "" })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setAccountName("");
+        setAccountNumber("");
+        setBank("");
+        setAccountNameInput("");
+        setAccountNumberInput("");
+        setBankInput("");
+        setAccountInfoMessage("Account info deleted.");
+      } else {
+        setAccountInfoMessage("Failed to delete account info.");
+      }
+    } catch (e) {
+      setAccountInfoMessage("Error deleting account info.");
+    } finally {
+      setAccountInfoLoading(false);
+    }
+  };
+  // --- Auth State ---
   const [isAdmin, setIsAdmin] = useState(false);
-  const [passkey, setPasskey] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [authLoading, setAuthLoading] = useState(false);
+  const [authError, setAuthError] = useState("");
 
   // --- Upload Form State (Sermons) ---
   const [title, setTitle] = useState("");
@@ -47,16 +136,30 @@ export default function AdminDashboardPage() {
     if (isAdmin) {
       fetchSermons();
       fetchWorship();
+      fetchAccountInfo();
     }
   }, [isAdmin]);
 
-  const handleLogin = (e) => {
+  const ADMIN_EMAIL = "ayokunleshittu@gmail.com"; // Replace with your Gmail
+  const handleLogin = async (e) => {
     e.preventDefault();
-    if (passkey === process.env.NEXT_PUBLIC_ADMIN_PASSWORD) {
-      setIsAdmin(true);
-    } else {
-      alert("Incorrect Access Key");
+    setAuthLoading(true);
+    setAuthError("");
+    const { error, data } = await supabase.auth.signInWithPassword({ email, password });
+    if (error) {
+      setAuthError(error.message || "Login failed");
+      setAuthLoading(false);
+      return;
     }
+    // Restrict access to only your Gmail
+    const userEmail = data?.user?.email || "";
+    if (userEmail !== ADMIN_EMAIL) {
+      setAuthError("Access denied: Only your Gmail can login.");
+      setAuthLoading(false);
+      return;
+    }
+    setIsAdmin(true);
+    setAuthLoading(false);
   };
 
   const handlePublish = async (e) => {
@@ -156,18 +259,31 @@ export default function AdminDashboardPage() {
     return (
       <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
         <div className="bg-white p-8 rounded-2xl shadow-xl border border-blue-100 w-full max-w-md">
-          <h2 className="text-xl font-bold text-blue-900 mb-4 text-center">Admin Verification</h2>
+          <h2 className="text-xl font-bold text-blue-900 mb-4 text-center">Admin Login</h2>
           <form onSubmit={handleLogin} className="space-y-4">
             <input
-              type="password"
-              placeholder="Enter Secret Access Key"
+              type="email"
+              placeholder="Email"
               className="w-full p-3 border rounded-lg text-black outline-none focus:ring-2 focus:ring-blue-500"
-              value={passkey}
-              onChange={(e) => setPasskey(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
             />
-            <button className="w-full bg-blue-800 text-white py-2 rounded-lg font-bold hover:bg-blue-900 transition text-center">
-              Verify Identity
+            <input
+              type="password"
+              placeholder="Password"
+              className="w-full p-3 border rounded-lg text-black outline-none focus:ring-2 focus:ring-blue-500"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <button
+              className="w-full bg-blue-800 text-white py-2 rounded-lg font-bold hover:bg-blue-900 transition text-center"
+              disabled={authLoading}
+            >
+              {authLoading ? "Logging in..." : "Login"}
             </button>
+            {authError && <p className="text-red-600 text-sm text-center">{authError}</p>}
           </form>
         </div>
       </main>
@@ -192,6 +308,57 @@ export default function AdminDashboardPage() {
 
         <div className="grid lg:grid-cols-2 gap-10 items-start">
           <div className="flex flex-col gap-8">
+            {/* Account Info Section */}
+            <div className="bg-white p-8 rounded-2xl shadow-xl border border-blue-100">
+              <h2 className="text-2xl font-bold text-blue-900 mb-6">Account Info</h2>
+              <form onSubmit={handleAccountInfoUpdate} className="space-y-5">
+                <input
+                  type="text"
+                  placeholder="Account Name"
+                  className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none"
+                  value={accountNameInput}
+                  onChange={(e) => setAccountNameInput(e.target.value)}
+                  disabled={accountInfoLoading}
+                />
+                <input
+                  type="text"
+                  placeholder="Account Number"
+                  className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none"
+                  value={accountNumberInput}
+                  onChange={(e) => setAccountNumberInput(e.target.value)}
+                  disabled={accountInfoLoading}
+                />
+                <input
+                  type="text"
+                  placeholder="Bank"
+                  className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none"
+                  value={bankInput}
+                  onChange={(e) => setBankInput(e.target.value)}
+                  disabled={accountInfoLoading}
+                />
+                <div className="flex gap-2">
+                  <button
+                    type="submit"
+                    disabled={accountInfoLoading}
+                    className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition"
+                  >
+                    {accountInfoLoading ? "Updating..." : "Update"}
+                  </button>
+                  <button
+                    type="button"
+                    disabled={accountInfoLoading || (!accountName && !accountNumber && !bank)}
+                    onClick={handleAccountInfoDelete}
+                    className="flex-1 bg-red-500 text-white py-3 rounded-lg font-bold hover:bg-red-600 transition"
+                  >
+                    Delete
+                  </button>
+                </div>
+                {accountInfoMessage && (
+                  <p className="text-green-600 text-sm">{accountInfoMessage}</p>
+                )}
+                <p className="text-gray-500 text-sm">Current: <span className="font-mono">{accountName || "Not set"} {accountNumber || ""} {bank || ""}</span></p>
+              </form>
+            </div>
             <div className="bg-white p-8 rounded-2xl shadow-xl border border-blue-100">
               <h2 className="text-2xl font-bold text-blue-900 mb-6">Upload Sermon</h2>
               <form onSubmit={handlePublish} className="space-y-5">
