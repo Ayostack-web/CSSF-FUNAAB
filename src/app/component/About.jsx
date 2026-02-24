@@ -20,12 +20,12 @@ export default function AboutUs() {
           <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-800 drop-shadow-md">
             Our Mission
           </h2>
-          <p className="text-gray-900 leading-relaxed mb-6">
+          <p className="text-gray-900 leading-relaxed mb-6 font-sans font-bold">
             We are a passionate community committed to transforming lives through faith, service, 
             and unity. Our mission is to create a welcoming space where everyone can grow spiritually, 
             build meaningful relationships, and discover their purpose in God’s plan.
           </p>
-          <p className="text-gray-900 leading-relaxed mb-6">
+          <p className="text-gray-900 leading-relaxed mb-6 font-sans font-bold">
             Guided by our core values of love, compassion, and integrity, we strive to impact our 
             local and global communities through outreach, worship, and discipleship.
           </p>
