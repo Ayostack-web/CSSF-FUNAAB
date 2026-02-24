@@ -91,7 +91,7 @@ export default function Groups() {
                 src={grp.image}
                 alt={grp.name}
                 fill
-                className="object-cover"
+                className="object-cover saturate-100"
               />
             </div>
 

@@ -11,7 +11,7 @@ export default function AboutUs() {
             src="/img/IMG_20251102_232411_744.jpg" // ✅ Correct reference (public/img/main.jpg)
             alt="Our Mission"
             fill
-            className="object-cover contrast-100"
+            className="object-cover saturate-100"
           />
         </div>
 
