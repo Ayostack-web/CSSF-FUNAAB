@@ -10,7 +10,9 @@ const Contact = () => {
       try {
         const res = await fetch("/api/site-settings/footer-phone", { cache: "no-store" });
         const data = await res.json();
-        const phones = [data.footerPhone, data.footerPhoneSecondary].filter(Boolean);
+        const phones = Array.isArray(data.footerPhones)
+          ? data.footerPhones
+          : [data.footerPhone, data.footerPhoneSecondary].filter(Boolean);
         setPhoneNumbers(phones);
       } catch {
         setPhoneNumbers([]);
@@ -33,7 +35,7 @@ const Contact = () => {
             Abeokuta, Ogun State.
           </p>
           {phoneNumbers.length > 0 && (
-            <p className="font-bold">📞 {phoneNumbers.join(" , ")}</p>
+            <p className="font-bold">📞 {phoneNumbers.join(" / ")}</p>
           )}
         </div>
     </section>
