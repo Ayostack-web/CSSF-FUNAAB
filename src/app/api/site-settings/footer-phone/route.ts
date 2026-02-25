@@ -1,12 +1,12 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
 export const runtime = 'nodejs';
 
 const SETTINGS_KEY_PRIMARY = 'footer_phone';
 const SETTINGS_KEY_SECONDARY = 'footer_phone_secondary';
 
-async function getSettingValue(supabase: any, key: string) {
+async function getSettingValue(supabase: SupabaseClient, key: string) {
   const { data, error } = await supabase
     .from('site_settings')
     .select('value')
@@ -17,7 +17,7 @@ async function getSettingValue(supabase: any, key: string) {
 }
 
 async function upsertSettingValue(
-  supabase: any,
+  supabase: SupabaseClient,
   key: string,
   value: string
 ) {

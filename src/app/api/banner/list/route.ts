@@ -18,7 +18,7 @@ function getStoragePathFromUrl(imageUrl: string) {
   }
 }
 
-export async function GET(req: Request) {
+export async function GET() {
   try {
     const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
     const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
