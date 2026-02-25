@@ -1,10 +1,27 @@
 "use client";
+import { useEffect, useState } from "react";
 import { FaFacebookF, FaInstagram } from "react-icons/fa";
 import { SiTiktok } from "react-icons/si";
 //import { FaXTwitter } from "react-icons/fa6"; // New X (Twitter) logo
 import { FaTelegram } from "react-icons/fa6";
 
 export default function Footer() {
+  const [phoneNumber, setPhoneNumber] = useState("");
+
+  useEffect(() => {
+    const fetchFooterPhone = async () => {
+      try {
+        const res = await fetch("/api/site-settings/footer-phone", { cache: "no-store" });
+        const data = await res.json();
+        setPhoneNumber(data.footerPhone || "");
+      } catch (error) {
+        setPhoneNumber("");
+      }
+    };
+
+    fetchFooterPhone();
+  }, []);
+
   return (
     <>
      <footer className="bg-[#071026] text-blue-100 text-center py-8 px-4">
@@ -25,6 +42,9 @@ export default function Footer() {
     <p className="mt-4 text-sm text-gray-400">
       © {new Date().getFullYear()} CSSF FUNAAB. | Developed By Ayokunle Shittu.
     </p>
+    {phoneNumber && (
+      <p className="mt-2 text-sm text-gray-300">Phone: {phoneNumber}</p>
+    )}
 
   </div>
 </footer>

@@ -11,6 +11,8 @@ export default function BannerAdmin() {
   const [loading, setLoading] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [eventName, setEventName] = useState("");
+  const [eventDate, setEventDate] = useState("");
+  const [eventTime, setEventTime] = useState("");
   const [file, setFile] = useState(null);
   const supabase = createClient();
 
@@ -51,7 +53,9 @@ export default function BannerAdmin() {
   // 2. Handle Image Upload & Database Insert
   const handleUpload = async (e) => {
     e.preventDefault();
-    if (!file || !eventName) return alert("Please provide both name and image");
+    if (!file || !eventName || !eventDate || !eventTime) {
+      return alert("Please provide event name, date, time, and image");
+    }
 
     setUploading(true);
     try {
@@ -85,7 +89,12 @@ export default function BannerAdmin() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${accessToken}`
         },
-        body: JSON.stringify({ event_name: eventName, image_url: publicUrl })
+        body: JSON.stringify({
+          event_name: eventName,
+          eventDate,
+          eventTime,
+          image_url: publicUrl
+        })
       });
 
       const apiData = await apiRes.json();
@@ -93,6 +102,8 @@ export default function BannerAdmin() {
 
       // SUCCESS: Reset form and refresh
       setEventName("");
+      setEventDate("");
+      setEventTime("");
       setFile(null);
       fetchBanners(); 
       alert("Banner added successfully!");
@@ -144,13 +155,35 @@ export default function BannerAdmin() {
       {/* Upload Form */}
       <Card className="border-2 border-dashed border-blue-200 bg-blue-50/30">
         <CardContent className="pt-6">
-          <form onSubmit={handleUpload} className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+          <form onSubmit={handleUpload} className="grid grid-cols-1 md:grid-cols-5 gap-6 items-end">
             <div className="space-y-2">
               <label className="text-sm font-semibold text-blue-900 ml-1">Event Name</label>
               <Input 
                 placeholder="e.g. Sunday Service" 
                 value={eventName}
                 onChange={(e) => setEventName(e.target.value)}
+                className="bg-white"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-blue-900 ml-1">Event Date</label>
+              <Input
+                type="date"
+                value={eventDate}
+                onChange={(e) => setEventDate(e.target.value)}
+                className="bg-white"
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label className="text-sm font-semibold text-blue-900 ml-1">Event Time</label>
+              <Input
+                type="time"
+                value={eventTime}
+                onChange={(e) => setEventTime(e.target.value)}
                 className="bg-white"
                 required
               />

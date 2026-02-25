@@ -1,4 +1,24 @@
+"use client";
+
+import { useEffect, useState } from "react";
+
 const Contact = () => {
+  const [phoneNumber, setPhoneNumber] = useState("");
+
+  useEffect(() => {
+    const fetchPhoneNumber = async () => {
+      try {
+        const res = await fetch("/api/site-settings/footer-phone", { cache: "no-store" });
+        const data = await res.json();
+        setPhoneNumber(data.footerPhone || "");
+      } catch {
+        setPhoneNumber("");
+      }
+    };
+
+    fetchPhoneNumber();
+  }, []);
+
   return (
     <section
       id="contact"
@@ -11,8 +31,7 @@ const Contact = () => {
             Harmony Estate, Funaab Gate,
             Abeokuta, Ogun State.
           </p>
-          <p className="font-bold">📞+234 705 971 2843 , +234 702 561 0725. </p>
-         {/*   <p className="font-bold">📧 hello@pizzaheaven.com</p>  */}
+          {phoneNumber && <p className="font-bold">📞 {phoneNumber}</p>}
         </div>
     </section>
   );

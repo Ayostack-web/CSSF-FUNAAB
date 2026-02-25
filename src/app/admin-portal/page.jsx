@@ -13,6 +13,10 @@ export default function AdminDashboardPage() {
   const [bankInput, setBankInput] = useState("");
   const [accountInfoLoading, setAccountInfoLoading] = useState(false);
   const [accountInfoMessage, setAccountInfoMessage] = useState("");
+  const [footerPhone, setFooterPhone] = useState("");
+  const [footerPhoneInput, setFooterPhoneInput] = useState("");
+  const [footerPhoneLoading, setFooterPhoneLoading] = useState(false);
+  const [footerPhoneMessage, setFooterPhoneMessage] = useState("");
 
   // Fetch account info from API
   const fetchAccountInfo = async () => {
@@ -62,6 +66,55 @@ export default function AdminDashboardPage() {
       setAccountInfoMessage("Error updating account info.");
     } finally {
       setAccountInfoLoading(false);
+    }
+  };
+
+  const fetchFooterPhone = async () => {
+    try {
+      setFooterPhoneLoading(true);
+      const res = await fetch("/api/site-settings/footer-phone");
+      const data = await res.json();
+      const phone = data.footerPhone || "";
+      setFooterPhone(phone);
+      setFooterPhoneInput(phone);
+    } catch (e) {
+      setFooterPhone("");
+      setFooterPhoneInput("");
+    } finally {
+      setFooterPhoneLoading(false);
+    }
+  };
+
+  const handleFooterPhoneUpdate = async (e) => {
+    e.preventDefault();
+    setFooterPhoneLoading(true);
+    setFooterPhoneMessage("");
+
+    try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token || "";
+      if (!accessToken) throw new Error("Please login again");
+
+      const res = await fetch("/api/site-settings/footer-phone", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
+        body: JSON.stringify({ footerPhone: footerPhoneInput }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || "Failed to update footer phone");
+      }
+
+      setFooterPhone(footerPhoneInput);
+      setFooterPhoneMessage("Footer phone number updated successfully.");
+    } catch (error) {
+      setFooterPhoneMessage(error?.message || "Error updating footer phone number.");
+    } finally {
+      setFooterPhoneLoading(false);
     }
   };
 
@@ -137,6 +190,7 @@ export default function AdminDashboardPage() {
       fetchSermons();
       fetchWorship();
       fetchAccountInfo();
+      fetchFooterPhone();
     }
   }, [isAdmin]);
 
@@ -365,6 +419,34 @@ export default function AdminDashboardPage() {
                   <p className="text-green-600 text-sm">{accountInfoMessage}</p>
                 )}
                 <p className="text-gray-500 text-sm">Current: <span className="font-mono">{accountName || "Not set"} {accountNumber || ""} {bank || ""}</span></p>
+              </form>
+            </div>
+
+            <div className="bg-white p-8 rounded-2xl shadow-xl border border-blue-100">
+              <h2 className="text-2xl font-bold text-blue-900 mb-6">Site Settings</h2>
+              <form onSubmit={handleFooterPhoneUpdate} className="space-y-5">
+                <input
+                  type="tel"
+                  placeholder="Footer Phone Number"
+                  className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none"
+                  value={footerPhoneInput}
+                  onChange={(e) => setFooterPhoneInput(e.target.value)}
+                  disabled={footerPhoneLoading}
+                  required
+                />
+                <button
+                  type="submit"
+                  disabled={footerPhoneLoading}
+                  className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition"
+                >
+                  {footerPhoneLoading ? "Saving..." : "Save Phone Number"}
+                </button>
+                {footerPhoneMessage && (
+                  <p className="text-sm text-green-600">{footerPhoneMessage}</p>
+                )}
+                <p className="text-gray-500 text-sm">
+                  Current: <span className="font-mono">{footerPhone || "Not set"}</span>
+                </p>
               </form>
             </div>
             <div className="bg-white p-8 rounded-2xl shadow-xl border border-blue-100">
