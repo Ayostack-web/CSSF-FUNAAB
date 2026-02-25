@@ -15,6 +15,40 @@ export default function UpcomingEvents({ serverEvents = [] }) {
   const [api, setApi] = useState(null);
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+
+  const formatEventDateTime = (event) => {
+    const rawDate = event.event_date || event.eventDate || "";
+    const rawTime = event.event_time || event.eventTime || "";
+
+    let formattedDate = "";
+    if (rawDate) {
+      const [year, month, day] = String(rawDate).split("-").map(Number);
+      if (year && month && day) {
+        const dateObj = new Date(Date.UTC(year, month - 1, day, 12, 0, 0));
+        formattedDate = new Intl.DateTimeFormat("en-NG", {
+          day: "2-digit",
+          month: "long",
+          year: "numeric",
+          timeZone: "Africa/Lagos",
+        }).format(dateObj);
+      }
+    }
+
+    let formattedTime = "";
+    if (rawTime) {
+      const [hourText, minuteText = "00"] = String(rawTime).split(":");
+      const hour = Number(hourText);
+      const minute = Number(minuteText);
+
+      if (!Number.isNaN(hour) && !Number.isNaN(minute)) {
+        const period = hour >= 12 ? "PM" : "AM";
+        const hour12 = ((hour + 11) % 12) + 1;
+        formattedTime = `${hour12}:${String(minute).padStart(2, "0")} ${period}`;
+      }
+    }
+
+    return [formattedDate, formattedTime].filter(Boolean).join(" • ");
+  };
   
   const plugin = useRef(
     Autoplay({ delay: 8000, stopOnInteraction: true })
@@ -48,6 +82,9 @@ export default function UpcomingEvents({ serverEvents = [] }) {
         >
           <CarouselContent className="-ml-4 animate-nudge">
             {events.map((event, idx) => (
+              (() => {
+                const formattedDateTime = formatEventDateTime(event);
+                return (
               <CarouselItem 
                 key={event.id} 
                 index={idx}
@@ -82,9 +119,16 @@ export default function UpcomingEvents({ serverEvents = [] }) {
                     <h3 className="font-bold text-sm text-blue-900 dark:text-white line-clamp-2 uppercase">
                       {event.event_name}
                     </h3>
+                    {formattedDateTime && (
+                      <p className="text-sm font-semibold text-blue-900 dark:text-blue-200 mt-1">
+                        {formattedDateTime}
+                      </p>
+                    )}
                   </div>
                 </div>
               </CarouselItem>
+                );
+              })()
             ))}
           </CarouselContent>
 

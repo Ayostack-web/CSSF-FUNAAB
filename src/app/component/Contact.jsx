@@ -3,16 +3,17 @@
 import { useEffect, useState } from "react";
 
 const Contact = () => {
-  const [phoneNumber, setPhoneNumber] = useState("");
+  const [phoneNumbers, setPhoneNumbers] = useState([]);
 
   useEffect(() => {
     const fetchPhoneNumber = async () => {
       try {
         const res = await fetch("/api/site-settings/footer-phone", { cache: "no-store" });
         const data = await res.json();
-        setPhoneNumber(data.footerPhone || "");
+        const phones = [data.footerPhone, data.footerPhoneSecondary].filter(Boolean);
+        setPhoneNumbers(phones);
       } catch {
-        setPhoneNumber("");
+        setPhoneNumbers([]);
       }
     };
 
@@ -31,7 +32,9 @@ const Contact = () => {
             Harmony Estate, Funaab Gate,
             Abeokuta, Ogun State.
           </p>
-          {phoneNumber && <p className="font-bold">📞 {phoneNumber}</p>}
+          {phoneNumbers.length > 0 && (
+            <p className="font-bold">📞 {phoneNumbers.join(" , ")}</p>
+          )}
         </div>
     </section>
   );

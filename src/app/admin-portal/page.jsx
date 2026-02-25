@@ -14,7 +14,9 @@ export default function AdminDashboardPage() {
   const [accountInfoLoading, setAccountInfoLoading] = useState(false);
   const [accountInfoMessage, setAccountInfoMessage] = useState("");
   const [footerPhone, setFooterPhone] = useState("");
+  const [footerPhoneSecondary, setFooterPhoneSecondary] = useState("");
   const [footerPhoneInput, setFooterPhoneInput] = useState("");
+  const [footerPhoneSecondaryInput, setFooterPhoneSecondaryInput] = useState("");
   const [footerPhoneLoading, setFooterPhoneLoading] = useState(false);
   const [footerPhoneMessage, setFooterPhoneMessage] = useState("");
 
@@ -74,12 +76,17 @@ export default function AdminDashboardPage() {
       setFooterPhoneLoading(true);
       const res = await fetch("/api/site-settings/footer-phone");
       const data = await res.json();
-      const phone = data.footerPhone || "";
-      setFooterPhone(phone);
-      setFooterPhoneInput(phone);
+      const primaryPhone = data.footerPhone || "";
+      const secondaryPhone = data.footerPhoneSecondary || "";
+      setFooterPhone(primaryPhone);
+      setFooterPhoneSecondary(secondaryPhone);
+      setFooterPhoneInput(primaryPhone);
+      setFooterPhoneSecondaryInput(secondaryPhone);
     } catch (e) {
       setFooterPhone("");
+      setFooterPhoneSecondary("");
       setFooterPhoneInput("");
+      setFooterPhoneSecondaryInput("");
     } finally {
       setFooterPhoneLoading(false);
     }
@@ -101,7 +108,10 @@ export default function AdminDashboardPage() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${accessToken}`,
         },
-        body: JSON.stringify({ footerPhone: footerPhoneInput }),
+        body: JSON.stringify({
+          footerPhone: footerPhoneInput,
+          footerPhoneSecondary: footerPhoneSecondaryInput,
+        }),
       });
 
       const data = await res.json();
@@ -110,9 +120,10 @@ export default function AdminDashboardPage() {
       }
 
       setFooterPhone(footerPhoneInput);
-      setFooterPhoneMessage("Footer phone number updated successfully.");
+      setFooterPhoneSecondary(footerPhoneSecondaryInput);
+      setFooterPhoneMessage("Contact phone numbers updated successfully.");
     } catch (error) {
-      setFooterPhoneMessage(error?.message || "Error updating footer phone number.");
+      setFooterPhoneMessage(error?.message || "Error updating contact phone numbers.");
     } finally {
       setFooterPhoneLoading(false);
     }
@@ -423,29 +434,37 @@ export default function AdminDashboardPage() {
             </div>
 
             <div className="bg-white p-8 rounded-2xl shadow-xl border border-blue-100">
-              <h2 className="text-2xl font-bold text-blue-900 mb-6">Site Settings</h2>
+              <h2 className="text-2xl font-bold text-blue-900 mb-6">Contact Info</h2>
               <form onSubmit={handleFooterPhoneUpdate} className="space-y-5">
                 <input
                   type="tel"
-                  placeholder="Footer Phone Number"
+                  placeholder="Primary Phone Number"
                   className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none"
                   value={footerPhoneInput}
                   onChange={(e) => setFooterPhoneInput(e.target.value)}
                   disabled={footerPhoneLoading}
                   required
                 />
+                <input
+                  type="tel"
+                  placeholder="Secondary Phone Number"
+                  className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none"
+                  value={footerPhoneSecondaryInput}
+                  onChange={(e) => setFooterPhoneSecondaryInput(e.target.value)}
+                  disabled={footerPhoneLoading}
+                />
                 <button
                   type="submit"
                   disabled={footerPhoneLoading}
                   className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition"
                 >
-                  {footerPhoneLoading ? "Saving..." : "Save Phone Number"}
+                  {footerPhoneLoading ? "Saving..." : "Save Phone Numbers"}
                 </button>
                 {footerPhoneMessage && (
                   <p className="text-sm text-green-600">{footerPhoneMessage}</p>
                 )}
                 <p className="text-gray-500 text-sm">
-                  Current: <span className="font-mono">{footerPhone || "Not set"}</span>
+                  Current: <span className="font-mono">{[footerPhone, footerPhoneSecondary].filter(Boolean).join(" , ") || "Not set"}</span>
                 </p>
               </form>
             </div>

@@ -5,10 +5,10 @@ export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
   try {
-    const { event_name, image_url } = await req.json();
+    const { event_name, image_url, eventDate, eventTime } = await req.json();
 
-    if (!event_name || !image_url) {
-      return NextResponse.json({ error: 'Missing event_name or image_url' }, { status: 400 });
+    if (!event_name || !image_url || !eventDate || !eventTime) {
+      return NextResponse.json({ error: 'Missing event_name, image_url, eventDate, or eventTime' }, { status: 400 });
     }
 
     const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -41,7 +41,7 @@ export async function POST(req: Request) {
 
     const { error } = await supabase
       .from('banners')
-      .insert([{ event_name, image_url }]);
+      .insert([{ event_name, image_url, event_date: eventDate, event_time: eventTime }]);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });

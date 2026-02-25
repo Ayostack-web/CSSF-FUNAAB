@@ -3,7 +3,47 @@ import { createClient } from '@supabase/supabase-js';
 
 export const runtime = 'nodejs';
 
-const SETTINGS_KEY = 'footer_phone';
+const SETTINGS_KEY_PRIMARY = 'footer_phone';
+const SETTINGS_KEY_SECONDARY = 'footer_phone_secondary';
+
+async function getSettingValue(supabase: any, key: string) {
+  const { data, error } = await supabase
+    .from('site_settings')
+    .select('value')
+    .eq('key', key)
+    .maybeSingle();
+
+  return { value: data?.value || '', error };
+}
+
+async function upsertSettingValue(
+  supabase: any,
+  key: string,
+  value: string
+) {
+  const { data: existing, error: existingError } = await supabase
+    .from('site_settings')
+    .select('id')
+    .eq('key', key)
+    .maybeSingle();
+
+  if (existingError) return { error: existingError };
+
+  if (existing?.id) {
+    const { error: updateError } = await supabase
+      .from('site_settings')
+      .update({ value })
+      .eq('id', existing.id);
+
+    return { error: updateError };
+  }
+
+  const { error: insertError } = await supabase
+    .from('site_settings')
+    .insert([{ key, value }]);
+
+  return { error: insertError };
+}
 
 function getSupabaseConfig() {
   const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -23,29 +63,33 @@ export async function GET() {
 
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    const { data, error } = await supabase
-      .from('site_settings')
-      .select('value')
-      .eq('key', SETTINGS_KEY)
-      .maybeSingle();
+    const [{ value: footerPhone, error: primaryError }, { value: footerPhoneSecondary, error: secondaryError }] = await Promise.all([
+      getSettingValue(supabase, SETTINGS_KEY_PRIMARY),
+      getSettingValue(supabase, SETTINGS_KEY_SECONDARY),
+    ]);
 
-    if (error) {
-      return NextResponse.json({ error: error.message, footerPhone: '' }, { status: 500 });
+    if (primaryError || secondaryError) {
+      const error = primaryError || secondaryError;
+      return NextResponse.json({ error: error?.message || 'Failed to load settings', footerPhone: '', footerPhoneSecondary: '' }, { status: 500 });
     }
 
-    return NextResponse.json({ footerPhone: data?.value || '' });
+    return NextResponse.json({
+      footerPhone,
+      footerPhoneSecondary,
+      footerPhones: [footerPhone, footerPhoneSecondary].filter(Boolean),
+    });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
-    return NextResponse.json({ error: message, footerPhone: '' }, { status: 500 });
+    return NextResponse.json({ error: message, footerPhone: '', footerPhoneSecondary: '', footerPhones: [] }, { status: 500 });
   }
 }
 
 export async function POST(req: Request) {
   try {
-    const { footerPhone = '' } = await req.json();
+    const { footerPhone = '', footerPhoneSecondary = '' } = await req.json();
 
-    if (!footerPhone) {
-      return NextResponse.json({ error: 'Missing footerPhone' }, { status: 400 });
+    if (!footerPhone && !footerPhoneSecondary) {
+      return NextResponse.json({ error: 'At least one phone number is required' }, { status: 400 });
     }
 
     const { supabaseUrl, anonKey, serviceKey } = getSupabaseConfig();
@@ -76,36 +120,22 @@ export async function POST(req: Request) {
 
     const supabase = createClient(supabaseUrl, serviceKey);
 
-    const { data: existing, error: existingError } = await supabase
-      .from('site_settings')
-      .select('id')
-      .eq('key', SETTINGS_KEY)
-      .maybeSingle();
+    const [{ error: primaryWriteError }, { error: secondaryWriteError }] = await Promise.all([
+      upsertSettingValue(supabase, SETTINGS_KEY_PRIMARY, footerPhone),
+      upsertSettingValue(supabase, SETTINGS_KEY_SECONDARY, footerPhoneSecondary),
+    ]);
 
-    if (existingError) {
-      return NextResponse.json({ error: existingError.message }, { status: 500 });
+    if (primaryWriteError || secondaryWriteError) {
+      const error = primaryWriteError || secondaryWriteError;
+      return NextResponse.json({ error: error?.message || 'Failed to save settings' }, { status: 500 });
     }
 
-    if (existing?.id) {
-      const { error: updateError } = await supabase
-        .from('site_settings')
-        .update({ value: footerPhone })
-        .eq('id', existing.id);
-
-      if (updateError) {
-        return NextResponse.json({ error: updateError.message }, { status: 500 });
-      }
-    } else {
-      const { error: insertError } = await supabase
-        .from('site_settings')
-        .insert([{ key: SETTINGS_KEY, value: footerPhone }]);
-
-      if (insertError) {
-        return NextResponse.json({ error: insertError.message }, { status: 500 });
-      }
-    }
-
-    return NextResponse.json({ success: true, footerPhone });
+    return NextResponse.json({
+      success: true,
+      footerPhone,
+      footerPhoneSecondary,
+      footerPhones: [footerPhone, footerPhoneSecondary].filter(Boolean),
+    });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);
     return NextResponse.json({ error: message }, { status: 500 });
