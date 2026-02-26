@@ -4,6 +4,7 @@ import { createClient } from "../utils/supabase/client";
 import BannerAdmin from "../component/BannerAdmin";
 
 export default function AdminDashboardPage() {
+  const ADMIN_EMAIL = "ayokunleshittu@gmail.com";
   // --- Account Info State ---
   const [accountName, setAccountName] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
@@ -50,22 +51,29 @@ export default function AdminDashboardPage() {
     setAccountInfoLoading(true);
     setAccountInfoMessage("");
     try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token || "";
+      if (!accessToken) throw new Error("Please login again");
+
       const res = await fetch("/api/account-number/update", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
         body: JSON.stringify({ accountName: accountNameInput, accountNumber: accountNumberInput, bank: bankInput })
       });
       const data = await res.json();
-      if (data.success) {
+      if (res.ok && data.success) {
         setAccountName(accountNameInput);
         setAccountNumber(accountNumberInput);
         setBank(bankInput);
         setAccountInfoMessage("Account info updated successfully.");
       } else {
-        setAccountInfoMessage("Failed to update account info.");
+        throw new Error(data.error || "Failed to update account info.");
       }
     } catch (e) {
-      setAccountInfoMessage("Error updating account info.");
+      setAccountInfoMessage(e?.message || "Error updating account info.");
     } finally {
       setAccountInfoLoading(false);
     }
@@ -134,13 +142,20 @@ export default function AdminDashboardPage() {
     setAccountInfoLoading(true);
     setAccountInfoMessage("");
     try {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const accessToken = sessionData?.session?.access_token || "";
+      if (!accessToken) throw new Error("Please login again");
+
       const res = await fetch("/api/account-number/update", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${accessToken}`,
+        },
         body: JSON.stringify({ accountName: "", accountNumber: "", bank: "" })
       });
       const data = await res.json();
-      if (data.success) {
+      if (res.ok && data.success) {
         setAccountName("");
         setAccountNumber("");
         setBank("");
@@ -149,10 +164,10 @@ export default function AdminDashboardPage() {
         setBankInput("");
         setAccountInfoMessage("Account info deleted.");
       } else {
-        setAccountInfoMessage("Failed to delete account info.");
+        throw new Error(data.error || "Failed to delete account info.");
       }
     } catch (e) {
-      setAccountInfoMessage("Error deleting account info.");
+      setAccountInfoMessage(e?.message || "Error deleting account info.");
     } finally {
       setAccountInfoLoading(false);
     }
@@ -180,6 +195,25 @@ export default function AdminDashboardPage() {
 
   const supabase = createClient();
 
+  useEffect(() => {
+    const checkAdminSession = async () => {
+      const { data } = await supabase.auth.getSession();
+      const userEmail = data?.session?.user?.email || "";
+      setIsAdmin(userEmail.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+    };
+
+    checkAdminSession();
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      const userEmail = session?.user?.email || "";
+      setIsAdmin(userEmail.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+    });
+
+    return () => subscription.unsubscribe();
+  }, [supabase]);
+
   const fetchSermons = async () => {
     const { data } = await supabase
       .from("sermons")
@@ -205,7 +239,6 @@ export default function AdminDashboardPage() {
     }
   }, [isAdmin]);
 
-  const ADMIN_EMAIL = "ayokunleshittu@gmail.com"; // Replace with your Gmail
   const handleLogin = async (e) => {
     e.preventDefault();
     setAuthLoading(true);
@@ -217,8 +250,9 @@ export default function AdminDashboardPage() {
       return;
     }
     // Restrict access to only your Gmail
-    const userEmail = data?.user?.email || "";
-    if (userEmail !== ADMIN_EMAIL) {
+    const userEmail = data?.user?.email?.toLowerCase() || "";
+    if (userEmail !== ADMIN_EMAIL.toLowerCase()) {
+      await supabase.auth.signOut();
       setAuthError("Access denied: Only your Gmail can login.");
       setAuthLoading(false);
       return;
@@ -372,7 +406,11 @@ export default function AdminDashboardPage() {
             <p className="text-slate-500">Manage your website content in real-time.</p>
           </div>
           <button
-            onClick={() => setIsAdmin(false)}
+            onClick={async () => {
+              await supabase.auth.signOut();
+              setIsAdmin(false);
+              window.location.href = "/admin-login";
+            }}
             className="bg-red-500 text-white px-6 py-2 rounded-lg font-bold shadow-md hover:bg-red-600 transition"
           >
             Logout

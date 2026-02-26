@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getRateLimitErrorResponse } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
 
@@ -20,6 +21,9 @@ function getStoragePathFromUrl(imageUrl: string) {
 
 export async function POST(req: Request) {
   try {
+    const rateLimitError = getRateLimitErrorResponse(req, 'api:banner-delete', 20, 60_000);
+    if (rateLimitError) return rateLimitError;
+
     const { id, image_url } = await req.json();
 
     if (!id) {

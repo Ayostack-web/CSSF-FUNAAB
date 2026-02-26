@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server';
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { getRateLimitErrorResponse } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
 
@@ -86,6 +87,9 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
+    const rateLimitError = getRateLimitErrorResponse(req, 'api:footer-phone-update', 20, 60_000);
+    if (rateLimitError) return rateLimitError;
+
     const { footerPhone = '', footerPhoneSecondary = '' } = await req.json();
 
     if (!footerPhone && !footerPhoneSecondary) {

@@ -1,10 +1,14 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@supabase/supabase-js';
+import { getRateLimitErrorResponse } from '@/lib/rate-limit';
 
 export const runtime = 'nodejs';
 
 export async function POST(req: Request) {
   try {
+    const rateLimitError = getRateLimitErrorResponse(req, 'api:worship-upload', 20, 60_000);
+    if (rateLimitError) return rateLimitError;
+
     const body = await req.json();
     const { title, image_url, order } = body;
 
