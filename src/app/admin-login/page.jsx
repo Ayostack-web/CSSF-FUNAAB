@@ -1,27 +1,25 @@
 "use client";
 
-import { useMemo, useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { createClient } from "../utils/supabase/client";
 
 const ADMIN_EMAIL = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || "ayokunleshittu@gmail.com").toLowerCase();
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const supabase = useMemo(() => createClient(), []);
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const nextPath = searchParams.get("next") || "/admin-portal";
-
   const handleLogin = async (event) => {
     event.preventDefault();
     setLoading(true);
     setError("");
+
+    const supabase = createClient();
 
     const { data, error: signInError } = await supabase.auth.signInWithPassword({
       email,
@@ -42,7 +40,7 @@ export default function AdminLoginPage() {
       return;
     }
 
-    router.replace(nextPath);
+    router.replace("/admin-portal");
     setLoading(false);
   };
 
