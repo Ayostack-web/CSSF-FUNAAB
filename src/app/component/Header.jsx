@@ -1,31 +1,11 @@
 "use client";
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
-import { createClient } from "../utils/supabase/client";
 import { Badge } from "@/components/ui/badge";
 
 export default function Header() {
   const [isOpen, setIsOpen] = useState(false);
-  const [isAdmin, setIsAdmin] = useState(false);
-  const supabase = useMemo(() => createClient(), []);
-
-  useEffect(() => {
-    const checkAdmin = async () => {
-      const { data } = await supabase.auth.getSession();
-      setIsAdmin(Boolean(data?.session?.user));
-    };
-
-    checkAdmin();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsAdmin(Boolean(session?.user));
-    });
-
-    return () => subscription.unsubscribe();
-  }, [supabase]);
 
   return (
     <header className="bg-[#071026] text-white py-4 fixed top-0 left-0 right-0 z-[1000]">
@@ -56,11 +36,9 @@ export default function Header() {
           <Link href="#contact" className="text-blue-100 hover:text-white transition">
             Contact
           </Link>
-          {isAdmin && (
-            <Link href="/admin-portal" className="inline-flex items-center">
-              <Badge variant="secondary" className="cursor-pointer">Admin Panel</Badge>
-            </Link>
-          )}
+          <Link href="/admin-portal" className="inline-flex items-center">
+            <Badge variant="secondary" className="cursor-pointer">Admin Panel</Badge>
+          </Link>
         </nav>
 
         {/* Hamburger */}
@@ -89,11 +67,9 @@ export default function Header() {
           <Link href="#contact" className="text-blue-100 hover:text-white transition">
             Contact
           </Link>
-          {isAdmin && (
-            <Link href="/admin-portal" className="inline-flex items-center">
-              <Badge variant="secondary" className="cursor-pointer">Admin Panel</Badge>
-            </Link>
-          )}
+          <Link href="/admin-portal" className="inline-flex items-center">
+            <Badge variant="secondary" className="cursor-pointer">Admin Panel</Badge>
+          </Link>
         </nav>
       )}
     </header>
