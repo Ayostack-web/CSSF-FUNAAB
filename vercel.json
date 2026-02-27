@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "rootDirectory": "ayostack-web/cssf-funaab/CSSF-FUNAAB-af0aa2f3f2f467dc0352ffebe2d9d1e4a2edd81d",
   "framework": "nextjs",
   "buildCommand": "next build",
   "installCommand": "npm install"
