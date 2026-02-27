@@ -1,7 +1,11 @@
 import { NextResponse, type NextRequest } from 'next/server'
 import { createServerClient } from '@supabase/ssr'
 
-const ADMIN_EMAIL = (process.env.ADMIN_EMAIL || 'ayokunleshittu@gmail.com').toLowerCase()
+const ADMIN_EMAIL = (
+  process.env.ADMIN_EMAIL ||
+  process.env.NEXT_PUBLIC_ADMIN_EMAIL ||
+  'ayokunleshittu@gmail.com'
+).toLowerCase()
 
 export async function middleware(request: NextRequest) {
   const pathname = request.nextUrl.pathname

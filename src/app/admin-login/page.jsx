@@ -1,13 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createClient } from "../utils/supabase/client";
-
-const ADMIN_EMAIL = (process.env.NEXT_PUBLIC_ADMIN_EMAIL || "ayokunleshittu@gmail.com").toLowerCase();
 
 export default function AdminLoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -21,7 +20,7 @@ export default function AdminLoginPage() {
 
     const supabase = createClient();
 
-    const { data, error: signInError } = await supabase.auth.signInWithPassword({
+    const { error: signInError } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
@@ -32,15 +31,8 @@ export default function AdminLoginPage() {
       return;
     }
 
-    const userEmail = data?.user?.email?.toLowerCase() || "";
-    if (userEmail !== ADMIN_EMAIL) {
-      await supabase.auth.signOut();
-      setError("Access denied: admin account required.");
-      setLoading(false);
-      return;
-    }
-
-    router.replace("/admin-portal");
+    const nextPath = searchParams.get("next") || "/admin-portal";
+    router.replace(nextPath);
     setLoading(false);
   };
 

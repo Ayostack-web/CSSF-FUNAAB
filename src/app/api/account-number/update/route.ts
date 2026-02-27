@@ -24,7 +24,11 @@ async function requireAdmin(request: NextRequest) {
 
   const authClient = createClient(supabaseUrl, anonKey);
   const { data: authData, error: authError } = await authClient.auth.getUser(token);
-  const allowedAdminEmail = (process.env.ADMIN_EMAIL || 'ayokunleshittu@gmail.com').toLowerCase();
+  const allowedAdminEmail = (
+    process.env.ADMIN_EMAIL ||
+    process.env.NEXT_PUBLIC_ADMIN_EMAIL ||
+    'ayokunleshittu@gmail.com'
+  ).toLowerCase();
   const requesterEmail = authData.user?.email?.toLowerCase() || '';
 
   if (authError || !authData.user || requesterEmail !== allowedAdminEmail) {

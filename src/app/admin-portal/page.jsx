@@ -4,7 +4,6 @@ import { createClient } from "../utils/supabase/client";
 import BannerAdmin from "../component/BannerAdmin";
 
 export default function AdminDashboardPage() {
-  const ADMIN_EMAIL = "ayokunleshittu@gmail.com";
   // --- Account Info State ---
   const [accountName, setAccountName] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
@@ -174,10 +173,7 @@ export default function AdminDashboardPage() {
   };
   // --- Auth State ---
   const [isAdmin, setIsAdmin] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [authLoading, setAuthLoading] = useState(false);
-  const [authError, setAuthError] = useState("");
+  const [authResolved, setAuthResolved] = useState(false);
 
   // --- Upload Form State (Sermons) ---
   const [title, setTitle] = useState("");
@@ -198,8 +194,8 @@ export default function AdminDashboardPage() {
   useEffect(() => {
     const checkAdminSession = async () => {
       const { data } = await supabase.auth.getSession();
-      const userEmail = data?.session?.user?.email || "";
-      setIsAdmin(userEmail.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+      setIsAdmin(Boolean(data?.session?.user));
+      setAuthResolved(true);
     };
 
     checkAdminSession();
@@ -207,8 +203,8 @@ export default function AdminDashboardPage() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      const userEmail = session?.user?.email || "";
-      setIsAdmin(userEmail.toLowerCase() === ADMIN_EMAIL.toLowerCase());
+      setIsAdmin(Boolean(session?.user));
+      setAuthResolved(true);
     });
 
     return () => subscription.unsubscribe();
@@ -238,28 +234,6 @@ export default function AdminDashboardPage() {
       fetchFooterPhone();
     }
   }, [isAdmin]);
-
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setAuthLoading(true);
-    setAuthError("");
-    const { error, data } = await supabase.auth.signInWithPassword({ email, password });
-    if (error) {
-      setAuthError(error.message || "Login failed");
-      setAuthLoading(false);
-      return;
-    }
-    // Restrict access to only your Gmail
-    const userEmail = data?.user?.email?.toLowerCase() || "";
-    if (userEmail !== ADMIN_EMAIL.toLowerCase()) {
-      await supabase.auth.signOut();
-      setAuthError("Access denied: Only your Gmail can login.");
-      setAuthLoading(false);
-      return;
-    }
-    setIsAdmin(true);
-    setAuthLoading(false);
-  };
 
   const handlePublish = async (e) => {
     e.preventDefault();
@@ -362,39 +336,16 @@ export default function AdminDashboardPage() {
   };
 
   // --- Rendering ---
-  if (!isAdmin) {
+  if (!authResolved) {
     return (
       <main className="min-h-screen bg-slate-50 flex items-center justify-center p-4">
-        <div className="bg-white p-8 rounded-2xl shadow-xl border border-blue-100 w-full max-w-md">
-          <h2 className="text-xl font-bold text-blue-900 mb-4 text-center">Admin Login</h2>
-          <form onSubmit={handleLogin} className="space-y-4">
-            <input
-              type="email"
-              placeholder="Email"
-              className="w-full p-3 border rounded-lg text-black outline-none focus:ring-2 focus:ring-blue-500"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <input
-              type="password"
-              placeholder="Password"
-              className="w-full p-3 border rounded-lg text-black outline-none focus:ring-2 focus:ring-blue-500"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <button
-              className="w-full bg-blue-800 text-white py-2 rounded-lg font-bold hover:bg-blue-900 transition text-center"
-              disabled={authLoading}
-            >
-              {authLoading ? "Logging in..." : "Login"}
-            </button>
-            {authError && <p className="text-red-600 text-sm text-center">{authError}</p>}
-          </form>
-        </div>
+        <p className="text-slate-600">Checking access...</p>
       </main>
     );
+  }
+
+  if (!isAdmin) {
+    return null;
   }
 
   return (

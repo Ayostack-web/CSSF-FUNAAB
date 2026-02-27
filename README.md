@@ -43,11 +43,13 @@ SUPABASE_URL=your_supabase_project_url
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
 ADMIN_EMAIL=your_admin_email@example.com
+NEXT_PUBLIC_ADMIN_EMAIL=your_admin_email@example.com
 ```
 
 Notes:
 - `SUPABASE_SERVICE_ROLE_KEY` must stay server-side only.
-- `ADMIN_EMAIL` is used to authorize write operations in protected API routes.
+- `ADMIN_EMAIL` is the primary server-side admin identity used by middleware and protected API routes.
+- `NEXT_PUBLIC_ADMIN_EMAIL` is optional and should match `ADMIN_EMAIL` if you use client-side admin identity checks.
 
 ## Database Requirements
 

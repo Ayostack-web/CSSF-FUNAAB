@@ -11,12 +11,9 @@ export default function Header() {
   const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
-    const ADMIN_EMAIL = "ayokunleshittu@gmail.com";
-
     const checkAdmin = async () => {
       const { data } = await supabase.auth.getSession();
-      const userEmail = data?.session?.user?.email || "";
-      setIsAdmin(userEmail === ADMIN_EMAIL);
+      setIsAdmin(Boolean(data?.session?.user));
     };
 
     checkAdmin();
@@ -24,8 +21,7 @@ export default function Header() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      const userEmail = session?.user?.email || "";
-      setIsAdmin(userEmail === ADMIN_EMAIL);
+      setIsAdmin(Boolean(session?.user));
     });
 
     return () => subscription.unsubscribe();
