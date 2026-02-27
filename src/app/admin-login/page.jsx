@@ -1,12 +1,11 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { createClient } from "../utils/supabase/client";
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const searchParams = useSearchParams();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -31,7 +30,8 @@ export default function AdminLoginPage() {
       return;
     }
 
-    const nextPath = searchParams.get("next") || "/admin-portal";
+    const search = typeof window !== "undefined" ? window.location.search : "";
+    const nextPath = new URLSearchParams(search).get("next") || "/admin-portal";
     router.replace(nextPath);
     setLoading(false);
   };
