@@ -16,7 +16,6 @@ import Service from './component/Service'
 import Contact from './component/Contact'
 import Sermon from './component/Sermon'
 import PledgeSection from './component/PledgeSection' // New wrapper
-import Scrollindicator from './component/ScrollIndicator'
 import Loader from './component/Loader'
 import UpcomingEvent from './component/UpcomingEvents'
 
@@ -133,7 +132,6 @@ export default async function Home() {
 
   return (
     <> 
-      <Scrollindicator/>
       <Header/>
       <Hero/>
       <About />
