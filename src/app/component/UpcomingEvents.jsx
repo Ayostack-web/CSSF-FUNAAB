@@ -66,7 +66,7 @@ export default function UpcomingEvents({ serverEvents = [] }) {
   if (events.length === 0) return null;
 
   return (
-    <section className="mt-2 py-10 bg-blue-50 overflow-hidden">
+    <section className="mt-auto mx-1 py-10 bg-blue-50 overflow-hidden">
       <div className="max-w-6xl mx-auto px-4">
         <h1 className="text-3xl font-bold text-center mb-8 text-blue-800 uppercase tracking-tight">
           Upcoming Gatherings
