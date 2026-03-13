@@ -53,8 +53,8 @@ export default function BannerAdmin() {
   // 2. Handle Image Upload & Database Insert
   const handleUpload = async (e) => {
     e.preventDefault();
-    if (!file || !eventName || !eventDate || !eventTime) {
-      return alert("Please provide event name, date, time, and image");
+    if (!file) {
+      return alert("Please select a banner image");
     }
 
     setUploading(true);
@@ -90,7 +90,7 @@ export default function BannerAdmin() {
           Authorization: `Bearer ${accessToken}`
         },
         body: JSON.stringify({
-          event_name: eventName,
+          event_name: eventName.trim(),
           eventDate,
           eventTime,
           image_url: publicUrl
@@ -163,7 +163,6 @@ export default function BannerAdmin() {
                 value={eventName}
                 onChange={(e) => setEventName(e.target.value)}
                 className="bg-white"
-                required
               />
             </div>
 
@@ -174,7 +173,6 @@ export default function BannerAdmin() {
                 value={eventDate}
                 onChange={(e) => setEventDate(e.target.value)}
                 className="bg-white"
-                required
               />
             </div>
 
@@ -185,7 +183,6 @@ export default function BannerAdmin() {
                 value={eventTime}
                 onChange={(e) => setEventTime(e.target.value)}
                 className="bg-white"
-                required
               />
             </div>
             
@@ -239,7 +236,7 @@ export default function BannerAdmin() {
             </div>
             <div className="p-3 flex justify-between items-center bg-white">
               <span className="font-bold text-sm text-blue-900 uppercase truncate pr-2">
-                {banner.event_name}
+                {banner.event_name || "UNTITLED EVENT"}
               </span>
               <Button 
                 variant="destructive" 

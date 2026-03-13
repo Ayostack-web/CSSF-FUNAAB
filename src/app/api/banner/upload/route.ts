@@ -11,8 +11,8 @@ export async function POST(req: Request) {
 
     const { event_name, image_url, eventDate, eventTime } = await req.json();
 
-    if (!event_name || !image_url || !eventDate || !eventTime) {
-      return NextResponse.json({ error: 'Missing event_name, image_url, eventDate, or eventTime' }, { status: 400 });
+    if (!image_url) {
+      return NextResponse.json({ error: 'Missing image_url' }, { status: 400 });
     }
 
     const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
@@ -46,10 +46,13 @@ export async function POST(req: Request) {
     }
 
     const supabase = createClient(supabaseUrl, serviceKey);
+    const normalizedEventName = typeof event_name === 'string' && event_name.trim() ? event_name.trim() : null;
+    const normalizedEventDate = typeof eventDate === 'string' && eventDate.trim() ? eventDate : null;
+    const normalizedEventTime = typeof eventTime === 'string' && eventTime.trim() ? eventTime : null;
 
     const { error } = await supabase
       .from('banners')
-      .insert([{ event_name, image_url, event_date: eventDate, event_time: eventTime }]);
+      .insert([{ event_name: normalizedEventName, image_url, event_date: normalizedEventDate, event_time: normalizedEventTime }]);
 
     if (error) {
       return NextResponse.json({ error: error.message }, { status: 500 });
