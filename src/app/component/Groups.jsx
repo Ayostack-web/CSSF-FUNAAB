@@ -99,8 +99,8 @@ export default function Groups() {
 
             <div className="p-6">
               <div className="flex items-center gap-2 mb-3">
-                <Badge variant="default">{grp.name}</Badge>
-                {grp.icon}
+                <Badge variant="default" className="bg-blue-800 text-white font-extrabold">{grp.name}</Badge>
+                <span className="text-blue-800 text-lg font-bold">{grp.icon}</span>
               </div>
               <p className="mt-2">{grp.about}</p> <br />
       
