@@ -17,7 +17,7 @@ export default function AboutUs() {
 
         {/* Right Side - Text */}
         <div>
-          <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-800 drop-shadow-md">
+          <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-900 drop-shadow-md">
             Our Mission
           </h2>
           <p className="text-gray-900 leading-relaxed mb-6 font-sans font-bold">
@@ -31,7 +31,7 @@ export default function AboutUs() {
           </p>
           <a
             href="#sermon"
-            className="inline-block px-8 py-3 text-lg font-semibold text-black bg-gradient-to-tr from-blue-300 to-teal-50 rounded-full shadow-lg hover:from-blue-900 hover:to-white hover:-translate-y-1 transition animate-pulse"
+            className="inline-block px-8 py-3 text-lg font-bold text-black bg-gradient-to-tr from-blue-300 to-teal-50 rounded-full shadow-lg hover:from-blue-900 hover:to-white hover:-translate-y-1 transition animate-pulse"
           >
             Learn More
           </a>

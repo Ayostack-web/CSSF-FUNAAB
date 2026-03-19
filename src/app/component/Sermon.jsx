@@ -41,7 +41,7 @@ export default function SermonsMedia({ serverSermons = [], serverWorship = [] })
 
   return (
     <section id="sermon" className="py-10 px-4 bg-blue-50">
-      <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-800 drop-shadow-md">
+      <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-900 drop-shadow-md">
         Sermons & Media
       </h2>
 
@@ -52,8 +52,8 @@ export default function SermonsMedia({ serverSermons = [], serverWorship = [] })
             key={tab}
             className={`px-6 py-2 rounded-full font-bold transition-all ${
               activeTab === tab 
-                ? "bg-blue-600 text-white shadow-lg scale-105" 
-                : "bg-white text-blue-600 border border-blue-600 hover:bg-blue-50"
+                ? "bg-blue-900 text-white shadow-lg scale-105" 
+                : "bg-white text-blue-900 border border-blue-900 hover:bg-blue-50"
             }`}
             onClick={() => setActiveTab(tab)}
           >

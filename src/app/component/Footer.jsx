@@ -22,7 +22,7 @@ export default function Footer() {
 
 
 
-    <p className="mt-4 text-sm text-gray-400">
+    <p className="mt-4 text-bold text-gray-200">
       © {new Date().getFullYear()} CSSF FUNAAB. | Developed By Ayokunle Shittu.
     </p>
 

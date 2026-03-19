@@ -31,7 +31,7 @@ export default function Herovideo(){
           Join us for worship, prayer, and impact
         </p>
          <motion.button
-                href="#about"  className="inline-block px-8 py-3 text-lg font-semibold text-black bg-gradient-to-tr from-blue-300 to-teal-50 rounded-full shadow-lg hover:from-blue-900 hover:to-white hover:-translate-y-1 transition "
+                href="#about"  className="inline-block px-8 py-3 text-lg font-bold text-black bg-gradient-to-tr from-blue-300 to-teal-50 rounded-full shadow-lg hover:from-blue-900 hover:to-white hover:-translate-y-1 transition "
               animate={{
                 scale: [1, 1.1, 1],
                

@@ -29,7 +29,7 @@ const Contact = () => {
     >
        {/* Contact Info */}
         <div className="mb-8 space-y-2  text-gray-700 text-left">
-           <h2 className="text-3xl font-bold text-gray-800 mb-5">CONTACT US</h2>
+           <h2 className="text-3xl font-extrabold text-blue-900 mb-5">CONTACT US</h2>
           <p className="font-bold" >🏠 5, Olugbenga Ladebo Street,
             Harmony Estate, Funaab Gate,
             Abeokuta, Ogun State.

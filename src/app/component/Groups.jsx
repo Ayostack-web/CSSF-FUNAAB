@@ -72,7 +72,7 @@ export default function Groups() {
 
   return (
     <section id="Group" className="py-8 px-4 bg-blue-50 text-black">
-      <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-800 drop-shadow-md">KINGDOM BUILDERS</h2>
+      <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-900 drop-shadow-md">KINGDOM BUILDERS</h2>
 
       <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-10">
         
@@ -99,7 +99,7 @@ export default function Groups() {
 
             <div className="p-6">
               <div className="flex items-center gap-2 mb-3">
-                <Badge variant="default" className="bg-blue-800 text-white font-extrabold">{grp.name}</Badge>
+                <Badge variant="default" className="bg-blue-900 text-white font-extrabold">{grp.name}</Badge>
                 <span className="text-blue-800 text-lg font-bold">{grp.icon}</span>
               </div>
               <p className="mt-2">{grp.about}</p> <br />

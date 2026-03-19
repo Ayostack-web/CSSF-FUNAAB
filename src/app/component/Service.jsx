@@ -12,7 +12,7 @@ export default function Experience() {
 
   return (
     <section className="py-16 px-4 bg-gradient-to-r from-blue-50 via-blue-50 to-blue-50 text-gray-800">
-      <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-800 drop-shadow-md">
+      <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-900 drop-shadow-md">
         Weekly Services
       </h2>
 

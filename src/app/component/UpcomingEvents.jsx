@@ -82,7 +82,7 @@ export default function UpcomingEvents({ serverEvents = [] }) {
           viewport={{ once: true }}
           className="text-center mb-12"
         >
-          <h1 className="text-4xl font-black text-blue-800 mb-3 drop-shadow-lg tracking-wide">
+          <h1 className="text-4xl font-black text-blue-900 mb-3 drop-shadow-lg tracking-wide">
             ✨ Upcoming Gatherings ✨
           </h1>
           <p className="text-blue-700 text-lg">Exciting events waiting for you</p>
