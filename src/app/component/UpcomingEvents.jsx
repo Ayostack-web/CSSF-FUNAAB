@@ -1,6 +1,7 @@
 "use client";
 import { useState, useEffect, useRef } from "react";
 import Autoplay from "embla-carousel-autoplay";
+import { motion } from "framer-motion";
 import { 
   Carousel, 
   CarouselContent, 
@@ -66,11 +67,26 @@ export default function UpcomingEvents({ serverEvents = [] }) {
   if (events.length === 0) return null;
 
   return (
-    <section className="mt-auto mx-1 py-10 bg-blue-50 overflow-hidden">
-      <div className="max-w-6xl mx-auto px-4">
-        <h1 className="text-3xl font-bold text-center mb-8 text-blue-800 uppercase tracking-tight">
-          Upcoming Gatherings
-        </h1>
+    <section className="relative mt-auto mx-1 py-16 bg-blue-50 overflow-hidden">
+      {/* Animated background gradient - subtle for light background */}
+      <div className="absolute inset-0 opacity-10">
+        <div className="absolute top-0 left-1/4 w-96 h-96 bg-blue-200 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-0 right-1/4 w-96 h-96 bg-blue-300 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
+      </div>
+
+      <div className="max-w-6xl mx-auto px-4 relative z-10">
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="text-center mb-12"
+        >
+          <h1 className="text-4xl font-black text-blue-800 mb-3 drop-shadow-lg tracking-wide">
+            ✨ Upcoming Gatherings ✨
+          </h1>
+          <p className="text-blue-700 text-lg">Exciting events waiting for you</p>
+        </motion.div>
         
         <Carousel 
           setApi={setApi} 
@@ -94,9 +110,9 @@ export default function UpcomingEvents({ serverEvents = [] }) {
                     The 'relative isolate' allows the ::before animation in your 
                     globals.css to show up without hiding behind the section. 
                 */}
-                <div className="animate-glow-border p-[3px] rounded-2xl h-full relative isolate shadow-xl flex flex-col">
+                <div className="animate-glow-border p-[3px] rounded-2xl h-full relative isolate shadow-xl flex flex-col hover:shadow-2xl transition-shadow duration-300">
                   
-                  <Card className="relative z-10 bg-white dark:bg-slate-950 w-full flex-1 rounded-[13px] border-none overflow-hidden">
+                  <Card className="relative z-10 bg-white dark:bg-slate-950 w-full flex-1 rounded-[13px] border-none overflow-hidden group hover:shadow-lg transition-all duration-300">
                     
                     {/* 2. FULL IMAGE LOGIC: 
                         'object-contain' ensures the full image is shown.
@@ -116,11 +132,11 @@ export default function UpcomingEvents({ serverEvents = [] }) {
                   
                   {/* Title Below Image */}
                   <div className="bg-white dark:bg-slate-950 px-3 py-2 rounded-b-[13px]">
-                    <h3 className="font-bold text-sm text-blue-900 dark:text-white line-clamp-2 uppercase">
+                    <h3 className="font-extrabold text-sm text-blue-900 dark:text-white line-clamp-2 uppercase">
                       {event.event_name}
                     </h3>
                     {formattedDateTime && (
-                      <p className="text-sm font-semibold text-blue-900 dark:text-blue-200 mt-1">
+                      <p className="text-sm font-bold text-blue-900 dark:text-blue-200 mt-1">
                         {formattedDateTime}
                       </p>
                     )}
@@ -134,8 +150,8 @@ export default function UpcomingEvents({ serverEvents = [] }) {
 
           {/* Nav Arrows */}
           <div className="hidden md:block">
-            <CarouselPrevious className="-left-12 border-blue-200 text-blue-800 hover:bg-blue-100" />
-            <CarouselNext className="-right-12 border-blue-200 text-blue-800 hover:bg-blue-100" />
+            <CarouselPrevious className="-left-12 border-blue-600 text-blue-900 hover:bg-blue-200" />
+            <CarouselNext className="-right-12 border-blue-600 text-blue-900 hover:bg-blue-200" />
           </div>
 
           {/* Dots */}

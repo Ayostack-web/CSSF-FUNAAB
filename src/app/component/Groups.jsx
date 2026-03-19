@@ -4,6 +4,8 @@ import { FaMusic, FaPrayingHands, FaHandsHelping, FaPhotoVideo } from "react-ico
 import { GiCrossedSwords, GiDramaMasks } from "react-icons/gi";
 import { FaExternalLinkAlt } from "react-icons/fa";
 import {motion} from "framer-motion"
+import { Badge } from "@/components/ui/badge";
+
 
 export default function Groups() {
   const Groups = [
@@ -96,9 +98,10 @@ export default function Groups() {
             </div>
 
             <div className="p-6">
-              <h3 className="text-xl font-semibold flex items-center">
-                {grp.name} {grp.icon}
-              </h3>
+              <div className="flex items-center gap-2 mb-3">
+                <Badge variant="default">{grp.name}</Badge>
+                {grp.icon}
+              </div>
               <p className="mt-2">{grp.about}</p> <br />
       
                   {/* Ensure the link exists before rendering the <a> tag */}
