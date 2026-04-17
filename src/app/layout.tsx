@@ -2,7 +2,8 @@ import { Analytics } from "@vercel/analytics/next"
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import Installbanner from './component/Installbanner' // 1. Ensure this path is correct
+import Installbanner from './component/Installbanner'
+import ErrorBoundary from './component/ErrorBoundary'
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -32,9 +33,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        {children}
-        <Installbanner /> 
-        <Analytics/>
+        <ErrorBoundary>
+          {children}
+          <Installbanner /> 
+          <Analytics/>
+        </ErrorBoundary>
       </body>
     </html>
   );

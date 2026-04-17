@@ -15,7 +15,7 @@ const testimonials = [
   },
   {
     quote:
-      "For the earth will be full of knowledge of the glory of the lord as the sea is covered by the waters.",
+      "For the earth will be full of knowledge of the glory of the Lord as the sea is covered by the waters.",
     name: " Habakkuk 2:14 (NIV)",
   },
 ];

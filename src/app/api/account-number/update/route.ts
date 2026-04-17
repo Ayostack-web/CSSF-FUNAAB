@@ -4,6 +4,12 @@ import { promises as fs } from 'fs';
 import path from 'path';
 import { createClient } from '@supabase/supabase-js';
 import { getRateLimitErrorResponse } from '@/lib/rate-limit';
+import {
+  validateAccountName,
+  validateAccountNumber,
+  validateBankName,
+  sanitizeString,
+} from '@/lib/validation';
 
 const ACCOUNT_FILE = path.resolve(process.cwd(), 'account-number.json');
 
@@ -57,11 +63,44 @@ export async function POST(request: NextRequest) {
     const authCheck = await requireAdmin(request);
     if (!authCheck.ok) return authCheck.response;
 
-    const { accountName = '', accountNumber = '', bank = '' } = await request.json();
-    await fs.writeFile(ACCOUNT_FILE, JSON.stringify({ accountName, accountNumber, bank }), 'utf-8');
+    const body = await request.json();
+    let { accountName = '', accountNumber = '', bank = '' } = body;
+
+    // Sanitize inputs
+    accountName = sanitizeString(accountName);
+    accountNumber = sanitizeString(accountNumber);
+    bank = sanitizeString(bank);
+
+    // Validate inputs
+    if (accountName && !validateAccountName(accountName)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid account name format' },
+        { status: 400 }
+      );
+    }
+
+    if (accountNumber && !validateAccountNumber(accountNumber)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid account number format' },
+        { status: 400 }
+      );
+    }
+
+    if (bank && !validateBankName(bank)) {
+      return NextResponse.json(
+        { success: false, error: 'Invalid bank name format' },
+        { status: 400 }
+      );
+    }
+
+    await fs.writeFile(
+      ACCOUNT_FILE,
+      JSON.stringify({ accountName, accountNumber, bank }),
+      'utf-8'
+    );
     return NextResponse.json({ success: true, accountName, accountNumber, bank });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
-    return NextResponse.json({ success: false, error: message });
+    return NextResponse.json({ success: false, error: message }, { status: 500 });
   }
 }
