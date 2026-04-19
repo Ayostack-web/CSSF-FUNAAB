@@ -83,7 +83,7 @@ const Header: FC<HeaderProps> = () => {
           </Link>
           {isAdmin && (
             <Link href="/admin-portal" className="inline-flex items-center">
-              <Badge className="cursor-pointer bg-gradient-to-r from-blue-600 to-blue-500 hover:from-blue-500 hover:to-blue-400 text-white shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-300 border-blue-400/30">
+              <Badge className="cursor-pointer bg-gradient-to-r from-blue-200 to-blue-200 hover:from-blue-200 hover:to-blue-200 text-shadow-gray-700 shadow-lg shadow-blue-500/30 hover:shadow-blue-500/50 transition-all duration-300 border-blue-400/30">
                 Admin Panel
               </Badge>
             </Link>
