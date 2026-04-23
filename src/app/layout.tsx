@@ -19,23 +19,15 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://cssf-funaab.vercel.app"),
 
-  // ✅ Google verification
-  verification: {
-    google: "PRtkDEgxR2w29h85OjRRN89YnEjh7OQzabi4szVt9UY",
-  },
-
-  // ✅ Title (updated with correct identity)
   title: {
     default:
       "CSSF FUNAAB – Cherubim and Seraphim Unification Campus Fellowship",
     template: "%s | CSSF FUNAAB",
   },
 
-  // ✅ Description (improved)
   description:
     "Official website of the Cherubim and Seraphim Unification Campus Fellowship (CSSF), FUNAAB Chapter. Join our fellowship for worship, spiritual growth, and campus activities in Abeokuta.",
 
-  // ✅ Keywords (targeted SEO)
   keywords: [
     "CSSF FUNAAB",
     "Cherubim and Seraphim FUNAAB",
@@ -53,7 +45,6 @@ export const metadata: Metadata = {
   ],
   creator: "CSSF FUNAAB",
 
-  // ✅ Canonical URL
   alternates: {
     canonical: "https://cssf-funaab.vercel.app",
   },
@@ -106,6 +97,14 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
+      <head>
+        {/* ✅ FORCE Google verification (this fixes your issue) */}
+        <meta
+          name="google-site-verification"
+          content="PRtkDEgxR2w29h85OjRRN89YnEjh7OQzabi4szVt9UY"
+        />
+      </head>
+
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
