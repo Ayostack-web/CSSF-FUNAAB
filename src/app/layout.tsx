@@ -19,11 +19,6 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   metadataBase: new URL("https://cssf-funaab.vercel.app"),
 
-  // ✅ Google verification (CORRECT WAY)
-  verification: {
-    google: "PRtkDEgxR2w29h85OjRRN89YnEjh7OQzabi4szVt9UY",
-  },
-
   title: {
     default:
       "CSSF FUNAAB – Cherubim and Seraphim Unification Campus Fellowship",
@@ -110,7 +105,6 @@ export default function RootLayout({
           <Installbanner />
           <Analytics />
 
-          {/* 🔥 STRUCTURED DATA */}
           <Script
             id="structured-data"
             type="application/ld+json"
