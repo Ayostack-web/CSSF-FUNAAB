@@ -105,6 +105,21 @@ export default function RootLayout({
           <Installbanner />
           <Analytics />
 
+          {/* ✅ GOOGLE ANALYTICS */}
+          <Script
+            src="https://www.googletagmanager.com/gtag/js?id=G-PG6L1YWCM7"
+            strategy="afterInteractive"
+          />
+          <Script id="google-analytics" strategy="afterInteractive">
+            {`
+              window.dataLayer = window.dataLayer || [];
+              function gtag(){dataLayer.push(arguments);}
+              gtag('js', new Date());
+              gtag('config', 'G-PG6L1YWCM7');
+            `}
+          </Script>
+
+          {/* 🔥 STRUCTURED DATA */}
           <Script
             id="structured-data"
             type="application/ld+json"
