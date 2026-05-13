@@ -17,7 +17,7 @@ const Footer: FC<FooterProps> = () => {
         <h1 className="text-transparent bg-clip-text bg-gradient-to-r from-blue-200 via-blue-100 to-blue-200 text-2xl font-semibold tracking-wide text-center mb-2">
           Follow Us
         </h1>
-        <p className="text-blue-100/70 text-center text-sm mb-6">Connect with CSSF FUNAAB on social media</p>
+        <p className="text-blue-100/70 text-center text-lg mb-6">Connect with CSSF FUNAAB on social media</p>
 
         {/* Social Icons - Premium styling */}
         <div className="flex justify-center gap-8 mb-6">
@@ -63,7 +63,7 @@ const Footer: FC<FooterProps> = () => {
 
         {/* Footer Text */}
         <div className="border-t border-blue-500/20 pt-4">
-          <p className="text-blue-100/70 text-center text-sm font-medium">
+          <p className="text-blue-100/70 text-center text-lg font-medium">
             © {currentYear} CSSF FUNAAB. | Developed By Ayokunle Shittu.
           </p>
         </div>
