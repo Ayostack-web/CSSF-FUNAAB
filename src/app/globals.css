@@ -83,54 +83,156 @@ html{
     }
   }
 
+  @keyframes spinningBorder {
+    from {
+      --spin-angle: 0deg;
+      filter: drop-shadow(0 0 8px rgba(147, 51, 234, 0.4));
+    }
+    50% {
+      filter: drop-shadow(0 0 20px rgba(147, 51, 234, 0.8), 0 0 40px rgba(147, 51, 234, 0.4));
+    }
+    to {
+      --spin-angle: 360deg;
+      filter: drop-shadow(0 0 8px rgba(147, 51, 234, 0.4));
+    }
+  }
+
   .animate-glow-card {
     position: relative;
-    border: 2px solid rgba(59, 130, 246, 0.8);
+    border: 3px solid transparent;
     border-radius: 1rem;
     background: white;
-    animation: borderGlow 4s ease-in-out infinite, glowPulse 4s ease-in-out infinite;
+    background-image: 
+      linear-gradient(white, white),
+      conic-gradient(
+        from var(--spin-angle, 0deg),
+        rgba(147, 51, 234, 1) 0deg,
+        rgba(147, 51, 234, 0.5) 90deg,
+        rgba(147, 51, 234, 0.3) 180deg,
+        rgba(147, 51, 234, 0.5) 270deg,
+        rgba(147, 51, 234, 1) 360deg
+      );
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    animation: spinningBorder 3s linear infinite;
     transition: all 0.3s ease;
   }
 
-  .animate-glow-card:hover {
-    border-color: rgba(147, 51, 234, 1);
-    filter: drop-shadow(0 0 20px rgba(147, 51, 234, 0.8));
-    transform: translateY(-2px);
-  }
-
   .dark .animate-glow-card {
-    background: #1e293b;
-    border-color: rgba(59, 130, 246, 0.8);
-  }
-
-  .dark .animate-glow-card:hover {
-    border-color: rgba(147, 51, 234, 1);
-    filter: drop-shadow(0 0 20px rgba(147, 51, 234, 0.8));
+    background-image: 
+      linear-gradient(#1e293b, #1e293b),
+      conic-gradient(
+        from var(--spin-angle, 0deg),
+        rgba(147, 51, 234, 1) 0deg,
+        rgba(147, 51, 234, 0.5) 90deg,
+        rgba(147, 51, 234, 0.3) 180deg,
+        rgba(147, 51, 234, 0.5) 270deg,
+        rgba(147, 51, 234, 1) 360deg
+      );
   }
 
   .animate-glow-border {
     position: relative;
-    border: 2px solid rgba(59, 130, 246, 0.8);
+    border: 3px solid transparent;
     border-radius: 1rem;
     background: white;
-    animation: borderGlow 4s ease-in-out infinite, glowPulse 4s ease-in-out infinite;
+    background-image: 
+      linear-gradient(white, white),
+      conic-gradient(
+        from var(--spin-angle, 0deg),
+        rgba(147, 51, 234, 1) 0deg,
+        rgba(147, 51, 234, 0.5) 90deg,
+        rgba(147, 51, 234, 0.3) 180deg,
+        rgba(147, 51, 234, 0.5) 270deg,
+        rgba(147, 51, 234, 1) 360deg
+      );
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    animation: spinningBorder 3s linear infinite;
     transition: all 0.3s ease;
   }
 
-  .animate-glow-border:hover {
-    border-color: rgba(147, 51, 234, 1);
-    filter: drop-shadow(0 0 20px rgba(147, 51, 234, 0.8));
-    transform: translateY(-2px);
-  }
-
   .dark .animate-glow-border {
-    background: #1e293b;
-    border-color: rgba(59, 130, 246, 0.8);
+    background-image: 
+      linear-gradient(#1e293b, #1e293b),
+      conic-gradient(
+        from var(--spin-angle, 0deg),
+        rgba(147, 51, 234, 1) 0deg,
+        rgba(147, 51, 234, 0.5) 90deg,
+        rgba(147, 51, 234, 0.3) 180deg,
+        rgba(147, 51, 234, 0.5) 270deg,
+        rgba(147, 51, 234, 1) 360deg
+      );
   }
 
-  .dark .animate-glow-border:hover {
-    border-color: rgba(147, 51, 234, 1);
-    filter: drop-shadow(0 0 20px rgba(147, 51, 234, 0.8));
+  @keyframes borderRotate {
+    0% {
+      background: linear-gradient(0deg, #2563eb, #2563eb) padding-box,
+                  linear-gradient(90deg, #2563eb, #2563eb) border-box;
+    }
+    25% {
+      background: linear-gradient(45deg, #2563eb, #ea580c) padding-box,
+                  conic-gradient(from 0deg, #2563eb 0deg, #ea580c 180deg, #2563eb 360deg) border-box;
+    }
+    50% {
+      background: linear-gradient(90deg, #ea580c, #ea580c) padding-box,
+                  linear-gradient(90deg, #ea580c, #ea580c) border-box;
+    }
+    75% {
+      background: linear-gradient(135deg, #ea580c, #2563eb) padding-box,
+                  conic-gradient(from 180deg, #ea580c 0deg, #2563eb 180deg, #ea580c 360deg) border-box;
+    }
+    100% {
+      background: linear-gradient(180deg, #2563eb, #2563eb) padding-box,
+                  linear-gradient(90deg, #2563eb, #2563eb) border-box;
+    }
+  }
+
+  @keyframes rotateBorder {
+    from {
+      --angle: 0deg;
+    }
+    to {
+      --angle: 360deg;
+    }
+  }
+
+  .sermon-card-animated {
+    position: relative;
+    border: 3px solid transparent;
+    border-radius: 1rem;
+    background: white;
+    background-image: 
+      linear-gradient(white, white),
+      conic-gradient(
+        from var(--spin-angle, 0deg),
+        #2563eb 0deg,
+        #ea580c 90deg,
+        #ea580c 180deg,
+        #2563eb 270deg,
+        #2563eb 360deg
+      );
+    background-origin: border-box;
+    background-clip: padding-box, border-box;
+    animation: spinningBorder 3s linear infinite;
+    transition: transform 0.3s ease;
+  }
+
+  .sermon-card-animated:hover {
+    transform: translateY(-4px);
+  }
+
+  .dark .sermon-card-animated {
+    background-image: 
+      linear-gradient(#1e293b, #1e293b),
+      conic-gradient(
+        from var(--spin-angle, 0deg),
+        #2563eb 0deg,
+        #ea580c 90deg,
+        #ea580c 180deg,
+        #2563eb 270deg,
+        #2563eb 360deg
+      );
   }
 }
 

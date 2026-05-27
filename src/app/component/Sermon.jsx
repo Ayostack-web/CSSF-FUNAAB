@@ -114,7 +114,7 @@ export default function SermonsMedia({ serverSermons = [], serverWorship = [] })
           /* SERMONS AND ANNOINTED SOUNDS GRID */
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             {mediaData[activeTab]?.map((item, idx) => (
-              <div key={idx} className="bg-white shadow-lg rounded-2xl overflow-hidden border border-blue-100 transition-transform hover:-translate-y-1">
+              <div key={idx} className="sermon-card-animated bg-white shadow-lg rounded-2xl overflow-hidden">
                 
                 {item.type === "video" && (
                   <div className="aspect-video">
