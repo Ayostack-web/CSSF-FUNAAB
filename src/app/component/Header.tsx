@@ -13,10 +13,15 @@ const Header: FC<HeaderProps> = () => {
   const [isAdmin, setIsAdmin] = useState(false);
   const supabase = useMemo(() => createClient(), []);
 
+  const adminEmail = (
+    process.env.NEXT_PUBLIC_ADMIN_EMAIL || 'ayokunleshittu@gmail.com'
+  ).toLowerCase();
+
   useEffect(() => {
     const checkAdmin = async () => {
       const { data } = await supabase.auth.getSession();
-      setIsAdmin(Boolean(data?.session?.user));
+      const email = data?.session?.user?.email?.toLowerCase() || '';
+      setIsAdmin(email === adminEmail);
     };
 
     checkAdmin();
@@ -24,11 +29,12 @@ const Header: FC<HeaderProps> = () => {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setIsAdmin(Boolean(session?.user));
+      const email = session?.user?.email?.toLowerCase() || '';
+      setIsAdmin(email === adminEmail);
     });
 
     return () => subscription.unsubscribe();
-  }, [supabase]);
+  }, [supabase, adminEmail]);
 
   return (
     <header className="fixed top-0 left-0 right-0 z-[1000] backdrop-blur-md bg-gradient-to-r from-[#071026]/95 via-[#0a1a35]/95 to-[#071026]/95 border-b border-blue-500/30 shadow-lg shadow-blue-500/20">
@@ -52,34 +58,26 @@ const Header: FC<HeaderProps> = () => {
         </div>
 
         {/* Desktop Nav - Premium styling */}
-        <nav className="hidden md:flex gap-8">
-          <Link
-            href="#"
-            className="relative text-blue-100 hover:text-blue-50 transition-colors duration-300 text-sm font-medium group"
-          >
-            Home
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-blue-300 group-hover:w-full transition-all duration-300" />
+        <nav className="hidden md:flex items-center gap-3">
+          <Link href="#">
+            <Badge className="bg-blue-50/10 hover:bg-blue-50/20 text-blue-100 hover:text-white border-blue-400/20 cursor-pointer px-4 py-1.5 text-sm font-medium transition-all duration-300">
+              Home
+            </Badge>
           </Link>
-          <Link
-            href="#about"
-            className="relative text-blue-100 hover:text-blue-50 transition-colors duration-300 text-sm font-medium group"
-          >
-            About
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-blue-300 group-hover:w-full transition-all duration-300" />
+          <Link href="#about">
+            <Badge className="bg-blue-50/10 hover:bg-blue-50/20 text-blue-100 hover:text-white border-blue-400/20 cursor-pointer px-4 py-1.5 text-sm font-medium transition-all duration-300">
+              About
+            </Badge>
           </Link>
-          <Link
-            href="#Group"
-            className="relative text-blue-100 hover:text-blue-50 transition-colors duration-300 text-sm font-medium group"
-          >
-            Units
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-blue-300 group-hover:w-full transition-all duration-300" />
+          <Link href="#Group">
+            <Badge className="bg-blue-50/10 hover:bg-blue-50/20 text-blue-100 hover:text-white border-blue-400/20 cursor-pointer px-4 py-1.5 text-sm font-medium transition-all duration-300">
+              Units
+            </Badge>
           </Link>
-          <Link
-            href="#contact"
-            className="relative text-blue-100 hover:text-blue-50 transition-colors duration-300 text-sm font-medium group"
-          >
-            Contact
-            <span className="absolute bottom-0 left-0 w-0 h-0.5 bg-gradient-to-r from-blue-400 to-blue-300 group-hover:w-full transition-all duration-300" />
+          <Link href="#contact">
+            <Badge className="bg-blue-50/10 hover:bg-blue-50/20 text-blue-100 hover:text-white border-blue-400/20 cursor-pointer px-4 py-1.5 text-sm font-medium transition-all duration-300">
+              Contact
+            </Badge>
           </Link>
           {isAdmin && (
             <Link href="/admin-portal" className="inline-flex items-center">
@@ -104,30 +102,26 @@ const Header: FC<HeaderProps> = () => {
 
       {/* Mobile Nav - Premium styling */}
       {isOpen && (
-        <nav className="flex flex-col md:hidden bg-gradient-to-b from-[#071026]/98 via-[#0a1a35]/98 to-[#071026]/98 backdrop-blur-lg absolute top-[calc(100%)] left-0 right-0 p-6 gap-4 border-t border-blue-500/30 shadow-2xl shadow-blue-500/20">
-          <Link
-            href="#"
-            className="text-blue-100 hover:text-blue-50 transition-colors duration-300 text-sm font-medium py-2 px-3 rounded-lg hover:bg-blue-500/10"
-          >
-            Home
+        <nav className="flex flex-col md:hidden bg-gradient-to-b from-[#071026]/98 via-[#0a1a35]/98 to-[#071026]/98 backdrop-blur-lg absolute top-[calc(100%)] right-0 w-1/2 p-6 gap-4 border-l border-blue-500/30 shadow-2xl shadow-blue-500/20 h-auto pb-4">
+          <Link href="#">
+            <Badge className="bg-blue-50/10 hover:bg-blue-50/20 text-blue-100 hover:text-white border-blue-400/20 cursor-pointer px-4 py-2 text-sm font-medium transition-all duration-300 w-full justify-start">
+              Home
+            </Badge>
           </Link>
-          <Link
-            href="#about"
-            className="text-blue-100 hover:text-blue-50 transition-colors duration-300 text-sm font-medium py-2 px-3 rounded-lg hover:bg-blue-500/10"
-          >
-            About
+          <Link href="#about">
+            <Badge className="bg-blue-50/10 hover:bg-blue-50/20 text-blue-100 hover:text-white border-blue-400/20 cursor-pointer px-4 py-2 text-sm font-medium transition-all duration-300 w-full justify-start">
+              About
+            </Badge>
           </Link>
-          <Link
-            href="#Group"
-            className="text-blue-100 hover:text-blue-50 transition-colors duration-300 text-sm font-medium py-2 px-3 rounded-lg hover:bg-blue-500/10"
-          >
-            Units
+          <Link href="#Group">
+            <Badge className="bg-blue-50/10 hover:bg-blue-50/20 text-blue-100 hover:text-white border-blue-400/20 cursor-pointer px-4 py-2 text-sm font-medium transition-all duration-300 w-full justify-start">
+              Units
+            </Badge>
           </Link>
-          <Link
-            href="#contact"
-            className="text-blue-100 hover:text-blue-50 transition-colors duration-300 text-sm font-medium py-2 px-3 rounded-lg hover:bg-blue-500/10"
-          >
-            Contact
+          <Link href="#contact">
+            <Badge className="bg-blue-50/10 hover:bg-blue-50/20 text-blue-100 hover:text-white border-blue-400/20 cursor-pointer px-4 py-2 text-sm font-medium transition-all duration-300 w-full justify-start">
+              Contact
+            </Badge>
           </Link>
           {isAdmin && (
             <Link href="/admin-portal" className="inline-flex items-center pt-2">

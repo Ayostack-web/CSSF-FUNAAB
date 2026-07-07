@@ -4,6 +4,7 @@ import { FC } from 'react';
 import { FaFacebookF, FaInstagram } from 'react-icons/fa';
 import { SiTiktok } from 'react-icons/si';
 import { FaTelegram } from 'react-icons/fa6';
+import Link from 'next/link';
 
 interface FooterProps {}
 
@@ -66,6 +67,11 @@ const Footer: FC<FooterProps> = () => {
           <p className="text-blue-100/70 text-center text-lg font-medium">
             © {currentYear} CSSF FUNAAB. | Developed By Ayokunle Shittu.
           </p>
+          <div className="mt-2 text-center">
+            <Link href="/admin-login" className="text-blue-400/40 hover:text-blue-400/70 text-xs transition-colors duration-300">
+              Admin
+            </Link>
+          </div>
         </div>
       </div>
     </footer>
