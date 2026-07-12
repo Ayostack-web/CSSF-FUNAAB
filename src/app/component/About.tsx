@@ -1,9 +1,6 @@
 import Image from 'next/image';
-import { FC } from 'react';
 
-interface AboutProps {}
-
-const About: FC<AboutProps> = () => {
+const About = () => {
   return (
     <section id="about" className="bg-blue-50 py-6 px-6">
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">

@@ -1,11 +1,11 @@
-// src/app/component/PledgeSection.jsx
 "use client";
 
-import { useState } from 'react';
-import Give from './Give';
-import Donate from './DonateCTA';
+import { useState } from "react";
+import type { FC } from "react";
+import Give from "./Give";
+import Donate from "./DonateCTA";
 
-export default function PledgeSection() {
+const PledgeSection: FC = () => {
   const [showPledge, setShowPledge] = useState(false);
 
   return (
@@ -14,4 +14,6 @@ export default function PledgeSection() {
       {showPledge && <Donate onClose={() => setShowPledge(false)} />}
     </>
   );
-}
+};
+
+export default PledgeSection;

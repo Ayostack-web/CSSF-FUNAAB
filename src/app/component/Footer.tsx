@@ -1,14 +1,11 @@
 'use client';
 
-import { FC } from 'react';
 import { FaFacebookF, FaInstagram } from 'react-icons/fa';
 import { SiTiktok } from 'react-icons/si';
 import { FaTelegram } from 'react-icons/fa6';
 import Link from 'next/link';
 
-interface FooterProps {}
-
-const Footer: FC<FooterProps> = () => {
+const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (

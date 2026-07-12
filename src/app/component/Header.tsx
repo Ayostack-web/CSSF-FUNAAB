@@ -1,14 +1,12 @@
 'use client';
 
 import Image from 'next/image';
-import { useEffect, useMemo, useState, FC } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import { createClient } from '../utils/supabase/client';
 import { Badge } from '@/components/ui/badge';
 
-interface HeaderProps {}
-
-const Header: FC<HeaderProps> = () => {
+const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
   const supabase = useMemo(() => createClient(), []);

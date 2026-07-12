@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../utils/supabase/client";
+import type { FormEvent } from "react";
 
 export default function AdminLoginPage() {
   const router = useRouter();
@@ -12,7 +13,7 @@ export default function AdminLoginPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleLogin = async (event) => {
+  const handleLogin = async (event: FormEvent) => {
     event.preventDefault();
     setLoading(true);
     setError("");

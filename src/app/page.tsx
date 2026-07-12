@@ -1,28 +1,22 @@
-
-  
-// src/app/page.jsx
-// 1. REMOVE "use client"
-// 2. REMOVE "import { useState } from 'react'"
-
 import { createClient } from "./utils/supabase/server";
 import { createClient as createServiceClient } from "@supabase/supabase-js";
-import Header from './component/Header'
-import Footer from './component/Footer'
-import Hero from './component/Hero'
-import Groups from './component/Groups'
-import About from './component/About'
-import Verse from './component/Verse'
-import Service from './component/Service'
-import Contact from './component/Contact'
-import Sermon from './component/Sermon'
-import PledgeSection from './component/PledgeSection' // New wrapper
-import Loader from './component/Loader'
-import UpcomingEvent from './component/UpcomingEvents'
+import Header from "./component/Header";
+import Footer from "./component/Footer";
+import Hero from "./component/Hero";
+import Groups from "./component/Groups";
+import About from "./component/About";
+import Verse from "./component/Verse";
+import Service from "./component/Service";
+import Contact from "./component/Contact";
+import Sermon from "./component/Sermon";
+import PledgeSection from "./component/PledgeSection";
+import Loader from "./component/Loader";
+import UpcomingEvent from "./component/UpcomingEvents";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 export const revalidate = 0;
 
-function getStoragePathFromUrl(imageUrl, bucket) {
+function getStoragePathFromUrl(imageUrl: string, bucket: string): string {
   try {
     const parsed = new URL(imageUrl || "");
     const marker = `/${bucket}/`;
@@ -30,48 +24,46 @@ function getStoragePathFromUrl(imageUrl, bucket) {
     if (idx !== -1) {
       return decodeURIComponent(parsed.pathname.slice(idx + marker.length));
     }
-    const fallback = parsed.pathname.split('/').pop() || '';
+    const fallback = parsed.pathname.split("/").pop() || "";
     return decodeURIComponent(fallback);
   } catch {
-    return (imageUrl || '').split('/').pop()?.split('?')[0] || '';
+    return (imageUrl || "").split("/").pop()?.split("?")[0] || "";
   }
 }
 
-
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type SupabaseClient = any;
 
 export default async function Home() {
-  // This now works because we are in a Server Component
-  const supabase = await createClient();
+  const supabase: SupabaseClient = await createClient();
 
-  // Fetch Sermons
   const { data: sermons } = await supabase
     .from("sermons")
     .select("*")
     .order("created_at", { ascending: false });
 
-  // Fetch Groups
   const { data: groups } = await supabase.from("groups").select("*");
 
-  // ADD THIS: Fetch Worship Gallery
   const { data: worship } = await supabase
-   .from("worship_images")
-   .select("*")
-   .order("order", { ascending: true });
+    .from("worship_images")
+    .select("*")
+    .order("order", { ascending: true });
 
   const { data: banners } = await supabase
     .from("banners")
     .select("*")
     .order("created_at", { ascending: false });
 
-  // If images are stored with public URLs but the bucket is private, generate signed URLs server-side
-  let worshipWithUrls = worship || [];
-  let bannersWithUrls = banners || [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let worshipWithUrls: any[] = worship || [];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  let bannersWithUrls: any[] = banners || [];
+
   try {
     const serviceUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
     const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
     if (serviceUrl && serviceKey) {
-      const service = createServiceClient(serviceUrl, serviceKey);
+      const service: SupabaseClient = createServiceClient(serviceUrl, serviceKey);
 
       if (!Array.isArray(bannersWithUrls) || bannersWithUrls.length === 0) {
         const { data: serviceBanners } = await service
@@ -83,7 +75,7 @@ export default async function Home() {
 
       if (Array.isArray(worshipWithUrls) && worshipWithUrls.length > 0) {
         const signedWorship = await Promise.all(
-          worshipWithUrls.map(async (item) => {
+          worshipWithUrls.map(async (item: { image_url?: string }) => {
             try {
               const imageUrl = item.image_url || "";
               const fileName = getStoragePathFromUrl(imageUrl, "worship_images");
@@ -99,13 +91,12 @@ export default async function Home() {
             }
           })
         );
-
         worshipWithUrls = signedWorship;
       }
 
       if (Array.isArray(bannersWithUrls) && bannersWithUrls.length > 0) {
         const signedBanners = await Promise.all(
-          bannersWithUrls.map(async (item) => {
+          bannersWithUrls.map(async (item: { image_url?: string }) => {
             try {
               const imageUrl = item.image_url || "";
               const fileName = getStoragePathFromUrl(imageUrl, "event-banners");
@@ -121,31 +112,27 @@ export default async function Home() {
             }
           })
         );
-
         bannersWithUrls = signedBanners;
       }
     }
-  } catch (err) {
+  } catch {
     // ignore and fall back to stored URLs
   }
 
-
   return (
-    <> 
-      <Header/>
-      <Hero/>
+    <>
+      <Header />
+      <Hero />
       <About />
-      <Loader/>
-       <UpcomingEvent serverEvents={bannersWithUrls || []} /> {/* Now it sits between Hero and About */}
-      {/* Pass data as props */}
+      <Loader />
+      <UpcomingEvent serverEvents={bannersWithUrls || []} />
       <Groups serverGroups={groups || []} />
-        <Sermon serverSermons={sermons || []}    serverWorship={worshipWithUrls || []}  />
-      <Service/>
-      <Verse/>
-      {/* Move showPledge logic into this component */}
+      <Sermon serverSermons={sermons || []} serverWorship={worshipWithUrls || []} />
+      <Service />
+      <Verse />
       <PledgeSection />
-      <Contact/>
-      <Footer/>
+      <Contact />
+      <Footer />
     </>
   );
 }
