@@ -1,5 +1,6 @@
 "use client";
 import { useState, useRef } from "react";
+import Image from "next/image";
 import { getDriveStreamLink } from "../utils/formatDriveLink";
 import Autoplay from "embla-carousel-autoplay";
 import {
@@ -62,8 +63,8 @@ export default function SermonsMedia({ serverSermons = [], serverWorship = [] }:
   };
 
   return (
-    <section id="sermon" className="py-10 px-4 bg-blue-50">
-      <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-900 drop-shadow-md">
+    <section id="sermon" className="py-10 px-4 section-shell">
+      <h2 className="section-title text-4xl text-center mb-12">
         Sermons &amp; Media
       </h2>
 
@@ -71,6 +72,8 @@ export default function SermonsMedia({ serverSermons = [], serverWorship = [] }:
         {tabs.map((tab) => (
           <button
             key={tab}
+            role="tab"
+            aria-selected={activeTab === tab}
             className={`px-6 py-2 rounded-full font-bold transition-all ${
               activeTab === tab
                 ? "bg-blue-900 text-white shadow-lg scale-105"
@@ -98,10 +101,12 @@ export default function SermonsMedia({ serverSermons = [], serverWorship = [] }:
                   <CarouselItem key={idx} index={idx} className="basis-full md:basis-1/2 lg:basis-1/3">
                     <Card className="border-none overflow-hidden shadow-xl rounded-2xl bg-white group">
                       <div className="relative aspect-square overflow-hidden">
-                        <img
+                        <Image
                           src={item.image_url || ""}
                           alt={item.title}
-                          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                          className="object-cover transition-transform duration-700 group-hover:scale-110"
                           onError={(e) => {
                             (e.target as HTMLImageElement).src =
                               "https://images.unsplash.com/photo-1470225620780-dba8ba36b745?w=500&h=500&fit=crop";

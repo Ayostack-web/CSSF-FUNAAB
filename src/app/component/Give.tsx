@@ -8,8 +8,8 @@ interface GiveProps {
 
 const Give: FC<GiveProps> = ({ onOpenPledge }) => {
   return (
-    <section className="bg-blue-50 py-10 text-center">
-      <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-900 drop-shadow-md">
+    <section className="section-shell py-10 text-center">
+      <h2 className="section-title text-4xl text-center mb-12">
         Support Our Mission
       </h2>
       <p className="font-bold text-blue-950 mb-8">
@@ -18,7 +18,7 @@ const Give: FC<GiveProps> = ({ onOpenPledge }) => {
       </p>
       <button
         onClick={onOpenPledge}
-        className="inline-block px-8 py-3 mt-3 text-lg font-bold text-black bg-gradient-to-tr from-blue-300 to-teal-50 rounded-full shadow-lg hover:from-blue-900 hover:to-white hover:-translate-y-1 transition"
+        className="btn-cta px-8 py-3 mt-3"
       >
         DONATE
       </button>

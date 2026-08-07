@@ -1,7 +1,7 @@
 export default function AdminPortalLoading() {
   return (
     <main className="min-h-screen bg-slate-50 py-12 px-4">
-      <div className="max-w-6xl mx-auto animate-pulse">
+      <div className="max-w-6xl mx-auto skeleton-shimmer">
         <div className="flex justify-between items-center mb-10">
           <div className="space-y-2">
             <div className="h-8 w-64 bg-slate-200 rounded" />

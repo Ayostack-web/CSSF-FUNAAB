@@ -4,6 +4,7 @@ import Script from "next/script";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import Installbanner from "./component/InstallBanner";
+import ScrollProgress from "./component/ScrollProgress";
 import ErrorBoundary from "./component/ErrorBoundary";
 import { Toaster } from "sonner";
 
@@ -103,6 +104,7 @@ export default function RootLayout({
       >
         <ErrorBoundary>
           <Toaster position="top-center" richColors closeButton />
+          <ScrollProgress />
           {children}
           <Installbanner />
           <Analytics />

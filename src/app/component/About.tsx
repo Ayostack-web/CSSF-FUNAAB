@@ -2,7 +2,7 @@ import Image from 'next/image';
 
 const About = () => {
   return (
-    <section id="about" className="bg-blue-50 py-6 px-6">
+    <section id="about" className="section-shell py-6 px-6">
       <div className="max-w-6xl mx-auto grid md:grid-cols-2 gap-12 items-center">
         {/* Left Side - Image */}
         <div className="relative w-full h-[400px] rounded-lg overflow-hidden shadow-lg">
@@ -16,7 +16,7 @@ const About = () => {
 
         {/* Right Side - Text */}
         <div>
-          <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-900 drop-shadow-md">
+          <h2 className="section-title text-4xl text-center mb-12">
             Our Mission
           </h2>
           <p className="text-gray-900 leading-relaxed mb-6 font-sans font-bold">
@@ -31,7 +31,7 @@ const About = () => {
           </p>
           <a
             href="#sermon"
-            className="inline-block px-8 py-3 text-lg font-bold text-black bg-gradient-to-tr from-blue-300 to-teal-50 rounded-full shadow-lg hover:from-blue-900 hover:to-white hover:-translate-y-1 transition animate-pulse"
+            className="btn-cta px-8 py-3"
           >
             Learn More
           </a>

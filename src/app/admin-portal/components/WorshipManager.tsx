@@ -3,6 +3,8 @@
 import { useState, useEffect, useCallback, type FC } from "react";
 import { createClient } from "../../utils/supabase/client";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface WorshipImage {
   id: string;
@@ -108,35 +110,34 @@ const WorshipManager: FC = () => {
 
   return (
     <>
-      <div className="bg-white p-8 rounded-2xl shadow-xl border border-blue-100">
-        <h2 className="text-2xl font-bold text-blue-900 mb-6">Upload Worship Image</h2>
+      <div className="card-shell">
+        <h2 className="card-title text-2xl mb-6">Upload Worship Image</h2>
         <form onSubmit={handleUpload} className="space-y-5">
-          <input
+          <Input
             type="text"
             placeholder="Image Title"
-            className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none"
+            className="h-12 rounded-lg"
             value={worshipTitle}
             onChange={(e) => setWorshipTitle(e.target.value)}
           />
-          <div className="relative">
-            <input
-              type="file"
-              accept="image/*"
-              className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none file:bg-blue-100 file:text-blue-900 file:px-3 file:py-1 file:rounded file:cursor-pointer file:border-0"
-              onChange={(e) => setWorshipImage(e.target.files?.[0] || null)}
-            />
-          </div>
-          <button
+          <Input
+            type="file"
+            accept="image/*"
+            className="h-12 rounded-lg file:bg-blue-100 file:text-blue-900 file:px-3 file:py-1 file:rounded file:cursor-pointer file:border-0"
+            onChange={(e) => setWorshipImage(e.target.files?.[0] || null)}
+          />
+          <Button
+            type="submit"
             disabled={loading}
-            className="w-full bg-blue-700 text-white py-3 rounded-lg font-bold hover:bg-blue-800 transition disabled:bg-gray-400"
+            className="w-full bg-blue-700 hover:bg-blue-800 text-white disabled:bg-gray-400"
           >
             {loading ? "Uploading..." : "Upload Image"}
-          </button>
+          </Button>
         </form>
       </div>
 
-      <div className="bg-white p-8 rounded-2xl shadow-xl border border-blue-100">
-        <h2 className="text-xl font-bold text-blue-900 mb-4">Worship Images</h2>
+      <div className="card-shell">
+        <h2 className="card-title text-xl mb-4">Worship Images</h2>
         <div className="divide-y divide-gray-100">
           {worship.map((item) => (
             <div key={item.id} className="py-3 flex justify-between items-center">

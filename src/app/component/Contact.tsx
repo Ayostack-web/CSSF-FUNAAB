@@ -24,9 +24,9 @@ const Contact: FC = () => {
   }, []);
 
   return (
-    <section id="contact" className="bg-blue-50 py-2 px-4 text-center">
+    <section id="contact" className="section-shell py-2 px-4 text-center">
       <div className="mb-8 space-y-2 text-gray-700 text-left">
-        <h2 className="text-3xl font-extrabold text-blue-900 mb-5">CONTACT US</h2>
+        <h2 className="section-title text-3xl mb-5">CONTACT US</h2>
         <p className="font-bold">
           5, Olugbenga Ladebo Street, Harmony Estate, Funaab Gate, Abeokuta, Ogun State.
         </p>

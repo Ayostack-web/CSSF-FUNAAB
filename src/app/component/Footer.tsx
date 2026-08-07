@@ -4,6 +4,7 @@ import { FaFacebookF, FaInstagram } from 'react-icons/fa';
 import { SiTiktok } from 'react-icons/si';
 import { FaTelegram } from 'react-icons/fa6';
 import Link from 'next/link';
+import Image from 'next/image';
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -62,7 +63,24 @@ const Footer = () => {
         {/* Footer Text */}
         <div className="border-t border-blue-500/20 pt-4">
           <p className="text-blue-100/70 text-center text-lg font-medium">
-            © {currentYear} CSSF FUNAAB. | Developed By Ayokunle Shittu.
+            © {currentYear} CSSF FUNAAB. | Developed By{' '}
+            <Link
+              href="https://ayostack.vercel.app/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="group inline-flex items-center gap-2 text-blue-100 hover:text-white transition-colors duration-300"
+            >
+              <Image
+                src="/img/ayo.png"
+                alt="Ayokunle Shittu"
+                width={24}
+                height={24}
+                className="rounded-full ring-1 ring-blue-400/40 group-hover:ring-blue-400/70 transition-all duration-300"
+              />
+              <span className="underline decoration-blue-400/30 underline-offset-4 group-hover:decoration-blue-300 transition-all duration-300">
+                Ayokunle Shittu
+              </span>
+            </Link>
           </p>
           <div className="mt-2 text-center">
             <Link href="/admin-login" className="text-blue-400/40 hover:text-blue-400/70 text-xs transition-colors duration-300">

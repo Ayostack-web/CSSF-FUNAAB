@@ -1,8 +1,16 @@
 "use client";
 import Image from "next/image";
-import type { ReactNode } from "react";
-import { FaMusic, FaPrayingHands, FaHandsHelping, FaPhotoVideo, FaExternalLinkAlt } from "react-icons/fa";
-import { GiCrossedSwords, GiDramaMasks } from "react-icons/gi";
+import { useRef, useState } from "react";
+import type { MouseEvent, ReactNode } from "react";
+import {
+  Music,
+  HeartHandshake,
+  Clapperboard,
+  Heart,
+  Camera,
+  Swords,
+  ExternalLink,
+} from "lucide-react";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 
@@ -18,42 +26,42 @@ const groups: GroupItem[] = [
   {
     image: "/img/IMG_20251102_233014_825.jpg",
     name: "Prayer Unit",
-    icon: <FaPrayingHands className="inline-block ml-2 text-lg" />,
+    icon: <HeartHandshake size={18} className="inline-block ml-2" />,
     about: "Connecting hearts to heaven through prayer. Join us in faith and fellowship!",
     link: "#",
   },
   {
     image: "/img/IMG_20251102_163931_572.jpg",
     name: "Choir",
-    icon: <FaMusic className="inline-block ml-2 text-lg" />,
+    icon: <Music size={18} className="inline-block ml-2" />,
     about: "Lifting hearts with every note! Join our choir and feel the joy of worship.",
     link: "#",
   },
   {
     image: "/img/IMG_20251102_232336_623.jpg",
     name: "Drama unit",
-    icon: <GiDramaMasks className="inline-block ml-2 text-lg" />,
+    icon: <Clapperboard size={18} className="inline-block ml-2" />,
     about: "Bringing God's word to life through creativity and performance!",
     link: "#",
   },
   {
     image: "/img/IMG_20251102_232759_670.jpg",
     name: "Evangelical Unit",
-    icon: <FaHandsHelping className="inline-block ml-2 text-lg" />,
+    icon: <Heart size={18} className="inline-block ml-2" />,
     about: "Sharing God's love with the world, one heart at a time!",
     link: "#",
   },
   {
     image: "/img/IMG_20251102_221019_834.jpg",
     name: "Media Unit",
-    icon: <FaPhotoVideo className="inline-block ml-2 text-lg" />,
+    icon: <Camera size={18} className="inline-block ml-2" />,
     about: "Capturing and sharing the message of God through creativity and technology.",
     link: "#",
   },
   {
     image: "/img/IMG_20251103_132510_405~2.jpg",
     name: "Levite Unit",
-    icon: <GiCrossedSwords className="inline-block ml-2 text-lg" />,
+    icon: <Swords size={18} className="inline-block ml-2" />,
     about: "To create an atmosphere where God's presence is honoured and His people are lifted.",
     link: "#",
   },
@@ -76,11 +84,45 @@ const cardVariants = {
   }),
 };
 
+function SpotlightCard({ children }: { children: ReactNode }) {
+  const cardRef = useRef<HTMLDivElement>(null);
+  const [opacity, setOpacity] = useState(0);
+  const [position, setPosition] = useState({ x: 0, y: 0 });
+
+  const handleMouseMove = (e: MouseEvent<HTMLDivElement>) => {
+    const rect = cardRef.current?.getBoundingClientRect();
+    if (!rect) return;
+    setPosition({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+  };
+
+  return (
+    <motion.div
+      ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={() => setOpacity(1)}
+      onMouseLeave={() => setOpacity(0)}
+      whileHover={{ y: -8 }}
+      whileTap={{ scale: 0.98 }}
+      transition={{ type: "spring", stiffness: 260, damping: 20 }}
+      className="group relative section-shell rounded-lg shadow-lg shadow-blue-950 hover:shadow-xl transition-shadow overflow-hidden"
+    >
+      {children}
+      <div
+        className="pointer-events-none absolute inset-0 z-10 rounded-lg"
+        style={{
+          opacity,
+          background: `radial-gradient(360px circle at ${position.x}px ${position.y}px, rgba(37, 99, 235, 0.16), transparent 45%)`,
+        }}
+      />
+    </motion.div>
+  );
+}
+
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 export default function Groups({ serverGroups: _serverGroups }: GroupsProps = {}) {
   return (
-    <section id="Group" className="py-8 px-4 bg-blue-50 text-black">
-      <h2 className="text-4xl font-extrabold text-center mb-12 text-blue-900 drop-shadow-md">
+    <section id="Group" className="py-8 px-4 section-shell text-black">
+      <h2 className="section-title text-4xl text-center mb-12">
         KINGDOM BUILDERS
       </h2>
 
@@ -93,35 +135,36 @@ export default function Groups({ serverGroups: _serverGroups }: GroupsProps = {}
             viewport={{ once: true, amount: 0.3 }}
             variants={cardVariants}
             custom={idx}
-            className="bg-blue-50 rounded-lg shadow-lg shadow-blue-950 hover:shadow-xl transition-shadow overflow-hidden"
           >
-            <div className="relative w-full h-80">
-              <Image
-                src={grp.image}
-                alt={grp.name}
-                fill
-                className="object-cover saturate-100"
-              />
-            </div>
-
-            <div className="p-6">
-              <div className="flex items-center gap-2 mb-3">
-                <Badge variant="default" className="bg-blue-900 text-white font-extrabold">
-                  {grp.name}
-                </Badge>
-                <span className="text-blue-800 text-lg font-bold">{grp.icon}</span>
+            <SpotlightCard>
+              <div className="relative w-full h-80 overflow-hidden">
+                <Image
+                  src={grp.image}
+                  alt={grp.name}
+                  fill
+                  className="object-cover saturate-100 transition-transform duration-500 group-hover:scale-105"
+                />
               </div>
-              <p className="mt-2">{grp.about}</p>
-              <br />
-              {grp.link && (
-                <a
-                  href={grp.link}
-                  className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
-                >
-                  Learn More <FaExternalLinkAlt size={14} />
-                </a>
-              )}
-            </div>
+
+              <div className="p-6">
+                <div className="flex items-center gap-2 mb-3">
+                  <Badge variant="default" className="bg-blue-900 text-white font-extrabold">
+                    {grp.name}
+                  </Badge>
+                  <span className="text-blue-800 text-lg font-bold">{grp.icon}</span>
+                </div>
+                <p className="mt-2">{grp.about}</p>
+                <br />
+                {grp.link && (
+                  <a
+                    href={grp.link}
+                    className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
+                  >
+                    Learn More <ExternalLink size={14} />
+                  </a>
+                )}
+              </div>
+            </SpotlightCard>
           </motion.div>
         ))}
       </div>

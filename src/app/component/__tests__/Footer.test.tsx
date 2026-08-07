@@ -47,7 +47,10 @@ describe('Footer Component', () => {
   it('displays developer credit', () => {
     render(<Footer />);
     
-    expect(screen.getByText(/Developed By Ayokunle Shittu/i)).toBeInTheDocument();
+    expect(screen.getByText(/Developed By/i)).toBeInTheDocument();
+    const creditLink = screen.getByRole('link', { name: /ayokunle shittu/i });
+    expect(creditLink).toHaveAttribute('href', 'https://ayostack.vercel.app/');
+    expect(creditLink).toHaveAttribute('target', '_blank');
   });
 
   it('social links open in new tab', () => {

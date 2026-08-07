@@ -29,7 +29,7 @@ const Verse: FC = () => {
   }, []);
 
   return (
-    <section className="text-center py-5 px-5 bg-blue-50 backdrop-blur-md rounded-2xl">
+    <section className="text-center py-5 px-5 section-shell backdrop-blur-md rounded-2xl">
       <h2 className="text-2xl mb-10 text-color">Memory Verse</h2>
       <div className="max-w-[700px] mx-auto animate-fadeIn">
         <p className="italic text-2xl text-color">

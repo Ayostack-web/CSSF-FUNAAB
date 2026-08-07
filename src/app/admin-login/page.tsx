@@ -3,6 +3,8 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { createClient } from "../utils/supabase/client";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import type { FormEvent } from "react";
 
 export default function AdminLoginPage() {
@@ -42,29 +44,44 @@ export default function AdminLoginPage() {
       <div className="bg-white p-8 rounded-2xl shadow-xl border border-blue-100 w-full max-w-md">
         <h2 className="text-xl font-bold text-blue-900 mb-4 text-center">Admin Login</h2>
         <form onSubmit={handleLogin} className="space-y-4">
-          <input
-            type="email"
-            placeholder="Email"
-            className="w-full p-3 border rounded-lg text-black outline-none focus:ring-2 focus:ring-blue-500"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            placeholder="Password"
-            className="w-full p-3 border rounded-lg text-black outline-none focus:ring-2 focus:ring-blue-500"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <button
-            className="w-full bg-blue-800 text-white py-2 rounded-lg font-bold hover:bg-blue-900 transition text-center"
+          <div className="space-y-1.5">
+            <label htmlFor="email" className="text-sm font-medium text-gray-700">
+              Email
+            </label>
+            <Input
+              id="email"
+              type="email"
+              placeholder="Enter your email"
+              className="h-12"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+              autoComplete="email"
+            />
+          </div>
+          <div className="space-y-1.5">
+            <label htmlFor="password" className="text-sm font-medium text-gray-700">
+              Password
+            </label>
+            <Input
+              id="password"
+              type="password"
+              placeholder="Enter your password"
+              className="h-12"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              autoComplete="current-password"
+            />
+          </div>
+          <Button
+            className="w-full h-12 bg-blue-800 hover:bg-blue-900 font-bold text-base"
             disabled={loading}
             type="submit"
+            size="lg"
           >
             {loading ? "Logging in..." : "Login"}
-          </button>
+          </Button>
           {error && <p className="text-red-600 text-sm text-center">{error}</p>}
         </form>
       </div>

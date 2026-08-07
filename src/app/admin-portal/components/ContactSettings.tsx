@@ -3,6 +3,8 @@
 import { useState, useEffect, type FC } from "react";
 import { createClient } from "../../utils/supabase/client";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 const ContactSettings: FC = () => {
   const [phone, setPhone] = useState("");
@@ -62,33 +64,33 @@ const ContactSettings: FC = () => {
   };
 
   return (
-    <div className="bg-white p-8 rounded-2xl shadow-xl border border-blue-100">
-      <h2 className="text-2xl font-bold text-blue-900 mb-6">Contact Info</h2>
+    <div className="card-shell">
+      <h2 className="card-title text-2xl mb-6">Contact Info</h2>
       <form onSubmit={handleUpdate} className="space-y-5">
-        <input
+        <Input
           type="tel"
           placeholder="Primary Phone Number"
-          className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none"
+          className="h-12 rounded-lg"
           value={input.phone}
           onChange={(e) => setInput({ ...input, phone: e.target.value })}
           disabled={loading}
           required
         />
-        <input
+        <Input
           type="tel"
           placeholder="Secondary Phone Number"
-          className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none"
+          className="h-12 rounded-lg"
           value={input.phoneSecondary}
           onChange={(e) => setInput({ ...input, phoneSecondary: e.target.value })}
           disabled={loading}
         />
-        <button
+        <Button
           type="submit"
           disabled={loading}
-          className="w-full bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition"
+          className="w-full bg-blue-600 hover:bg-blue-700 text-white"
         >
           {loading ? "Saving..." : "Save Phone Numbers"}
-        </button>
+        </Button>
         <p className="text-gray-500 text-sm">
           Current: <span className="font-mono">{[phone, phoneSecondary].filter(Boolean).join(" , ") || "Not set"}</span>
         </p>

@@ -3,6 +3,8 @@
 import { useState, useEffect, type FC } from "react";
 import { createClient } from "../../utils/supabase/client";
 import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 
 interface AccountInfo {
   accountName: string;
@@ -96,49 +98,50 @@ const AccountInfoSettings: FC = () => {
   const hasData = current.accountName || current.accountNumber || current.bank;
 
   return (
-    <div className="bg-white p-8 rounded-2xl shadow-xl border border-blue-100">
-      <h2 className="text-2xl font-bold text-blue-900 mb-6">Account Info</h2>
+    <div className="card-shell">
+      <h2 className="card-title text-2xl mb-6">Account Info</h2>
       <form onSubmit={handleUpdate} className="space-y-5">
-        <input
+        <Input
           type="text"
           placeholder="Account Name"
-          className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none"
+          className="h-12 rounded-lg"
           value={input.accountName}
           onChange={(e) => setInput({ ...input, accountName: e.target.value })}
           disabled={loading}
         />
-        <input
+        <Input
           type="text"
           placeholder="Account Number"
-          className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none"
+          className="h-12 rounded-lg"
           value={input.accountNumber}
           onChange={(e) => setInput({ ...input, accountNumber: e.target.value })}
           disabled={loading}
         />
-        <input
+        <Input
           type="text"
           placeholder="Bank"
-          className="w-full p-3 border rounded-lg text-black focus:ring-2 focus:ring-blue-500 outline-none"
+          className="h-12 rounded-lg"
           value={input.bank}
           onChange={(e) => setInput({ ...input, bank: e.target.value })}
           disabled={loading}
         />
         <div className="flex gap-2">
-          <button
+          <Button
             type="submit"
             disabled={loading}
-            className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-bold hover:bg-blue-700 transition"
+            className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
           >
             {loading ? "Updating..." : "Update"}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
+            variant="outline"
             disabled={loading || !hasData}
             onClick={handleDelete}
-            className="flex-1 bg-red-500 text-white py-3 rounded-lg font-bold hover:bg-red-600 transition"
+            className="flex-1 bg-red-500 hover:bg-red-600 text-white border-transparent"
           >
             Delete
-          </button>
+          </Button>
         </div>
         <p className="text-gray-500 text-sm">
           Current: <span className="font-mono">{current.accountName || "Not set"} {current.accountNumber || ""} {current.bank || ""}</span>

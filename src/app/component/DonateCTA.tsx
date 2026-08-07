@@ -70,7 +70,7 @@ const DonateCTA: FC<DonateCTAProps> = ({ onClose }) => {
           </span>
           <button
             onClick={() => copyToClipboard(accountNumber)}
-            className="inline-block px-8 py-3 mt-3 text-lg font-semibold text-black bg-gradient-to-tr from-blue-300 to-teal-50 rounded-full shadow-lg hover:from-blue-900 hover:to-white hover:-translate-y-1 transition"
+            className="btn-cta px-8 py-3 mt-3"
           >
             {copiedAccount === accountNumber ? "Copied!" : "Copy"}
           </button>

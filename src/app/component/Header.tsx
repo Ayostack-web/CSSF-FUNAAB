@@ -90,6 +90,8 @@ const Header = () => {
         <button
           onClick={() => setIsOpen(!isOpen)}
           aria-label="Toggle menu"
+          aria-expanded={isOpen}
+          aria-controls="mobile-nav"
           className={`block md:hidden relative w-10 h-10 flex items-center justify-center text-white text-2xl transition-all duration-300 rounded-lg hover:bg-blue-500/10 active:bg-blue-500/20 ${
             isOpen ? 'rotate-180' : 'rotate-0'
           }`}
@@ -100,7 +102,10 @@ const Header = () => {
 
       {/* Mobile Nav - Premium styling */}
       {isOpen && (
-        <nav className="flex flex-col md:hidden bg-gradient-to-b from-[#071026]/98 via-[#0a1a35]/98 to-[#071026]/98 backdrop-blur-lg absolute top-[calc(100%)] right-0 w-1/2 p-6 gap-4 border-l border-blue-500/30 shadow-2xl shadow-blue-500/20 h-auto pb-4">
+        <nav
+          id="mobile-nav"
+          className="flex flex-col md:hidden bg-gradient-to-b from-[#071026]/98 via-[#0a1a35]/98 to-[#071026]/98 backdrop-blur-lg absolute top-[calc(100%)] right-0 w-1/2 p-6 gap-4 border-l border-blue-500/30 shadow-2xl shadow-blue-500/20 h-auto pb-4"
+        >
           <Link href="#">
             <Badge className="bg-blue-50/10 hover:bg-blue-50/20 text-blue-100 hover:text-white border-blue-400/20 cursor-pointer px-4 py-2 text-sm font-medium transition-all duration-300 w-full justify-start">
               Home
