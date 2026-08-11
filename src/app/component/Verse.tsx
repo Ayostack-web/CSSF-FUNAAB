@@ -1,6 +1,8 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import type { FC } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { ChevronLeft, ChevronRight, Quote } from "lucide-react";
 import { createClient } from "../utils/supabase/client";
 
 const fallbackVerses = [
@@ -47,33 +49,80 @@ const Verse: FC = () => {
     };
   }, []);
 
+  const goTo = useCallback(
+    (index: number) => {
+      if (verses.length === 0) return;
+      setCurrent(((index % verses.length) + verses.length) % verses.length);
+    },
+    [verses.length]
+  );
+
   useEffect(() => {
-    const interval = setInterval(
-      () => setCurrent((prev) => (prev + 1) % Math.max(verses.length, 1)),
-      10000
-    );
+    const interval = setInterval(() => goTo(current + 1), 10000);
     return () => clearInterval(interval);
-  }, [verses.length]);
+  }, [goTo, current]);
+
+  const active = verses[current] || fallbackVerses[0];
 
   return (
-    <section className="text-center py-5 px-5 section-shell backdrop-blur-md rounded-2xl">
-      <h2 className="text-2xl mb-10 text-color">Memory Verse</h2>
-      <div className="max-w-[700px] mx-auto animate-fadeIn">
-        <p className="italic text-2xl text-color">
-          &ldquo;{verses[current].quote}&rdquo;
-        </p>
-        <h4 className="mt-5 font-bold text-color">{verses[current].name}</h4>
+    <section className="text-center py-12 px-4 section-shell">
+      <h2 className="section-title text-3xl mb-8">Memory Verse</h2>
 
-        <div className="flex justify-center mt-6 gap-2">
-          {verses.map((_, index) => (
-            <span
-              key={index}
-              onClick={() => setCurrent(index)}
-              className={`h-3 w-3 rounded-full cursor-pointer transition ${
-                index === current ? "bg-sky-400" : "bg-gray-400"
-              }`}
-            />
-          ))}
+      <div className="relative max-w-3xl mx-auto px-6 py-8">
+        <Quote
+          className="mx-auto mb-6 text-blue-300 rotate-180"
+          size={48}
+          strokeWidth={1.5}
+        />
+
+        <div className="relative min-h-[160px] md:min-h-[140px] flex flex-col items-center justify-center">
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={current}
+              initial={{ opacity: 0, y: 18 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -18 }}
+              transition={{ duration: 0.45, ease: "easeInOut" }}
+            >
+              <p className="italic text-xl md:text-2xl font-medium text-blue-950 leading-relaxed tracking-wide">
+                &ldquo;{active.quote}&rdquo;
+              </p>
+              <h4 className="mt-6 font-bold text-blue-900 text-lg tracking-wide">
+                {active.name}
+              </h4>
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        <div className="mt-8 flex items-center justify-center gap-4">
+          <button
+            onClick={() => goTo(current - 1)}
+            aria-label="Previous verse"
+            className="p-2 rounded-full border border-blue-300 bg-white/60 text-blue-700 hover:text-blue-900 hover:border-blue-400 hover:bg-white transition-all duration-300 cursor-pointer"
+          >
+            <ChevronLeft size={20} />
+          </button>
+
+          <div className="flex items-center gap-2">
+            {verses.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goTo(index)}
+                aria-label={`Go to verse ${index + 1}`}
+                className={`h-2.5 rounded-full transition-all duration-300 cursor-pointer ${
+                  index === current ? "w-8 bg-blue-500" : "w-2.5 bg-blue-300 hover:bg-blue-400"
+                }`}
+              />
+            ))}
+          </div>
+
+          <button
+            onClick={() => goTo(current + 1)}
+            aria-label="Next verse"
+            className="p-2 rounded-full border border-blue-300 bg-white/60 text-blue-700 hover:text-blue-900 hover:border-blue-400 hover:bg-white transition-all duration-300 cursor-pointer"
+          >
+            <ChevronRight size={20} />
+          </button>
         </div>
       </div>
     </section>
