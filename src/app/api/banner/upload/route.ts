@@ -1,10 +1,12 @@
 import { NextResponse } from 'next/server';
-import { createClient } from '@supabase/supabase-js';
+import type { NextRequest } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { getRateLimitErrorResponse } from '@/lib/rate-limit';
+import { requireAdmin, createAdminClient } from '@/lib/admin';
 
 export const runtime = 'nodejs';
 
-export async function POST(req: Request) {
+export async function POST(req: NextRequest) {
   try {
     const rateLimitError = getRateLimitErrorResponse(req, 'api:banner-upload', 20, 60_000);
     if (rateLimitError) return rateLimitError;
@@ -15,37 +17,14 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: 'Missing image_url' }, { status: 400 });
     }
 
-    const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+    const authCheck = await requireAdmin(req);
+    if (!authCheck.ok) return authCheck.response;
 
-    if (!supabaseUrl || !serviceKey || !anonKey) {
-      return NextResponse.json(
-        { error: 'Server misconfigured: missing SUPABASE_SERVICE_ROLE_KEY, NEXT_PUBLIC_SUPABASE_ANON_KEY, or SUPABASE_URL' },
-        { status: 500 }
-      );
+    const supabase = createAdminClient();
+    if (!supabase) {
+      return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
     }
 
-    const authHeader = req.headers.get('authorization') || '';
-    const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
-    if (!token) {
-      return NextResponse.json({ error: 'Unauthorized: missing access token' }, { status: 401 });
-    }
-
-    const authClient = createClient(supabaseUrl, anonKey);
-    const { data: authData, error: authError } = await authClient.auth.getUser(token);
-    const allowedAdminEmail = (
-      process.env.ADMIN_EMAIL ||
-      process.env.NEXT_PUBLIC_ADMIN_EMAIL ||
-      'ayokunleshittu@gmail.com'
-    ).toLowerCase();
-    const requesterEmail = authData.user?.email?.toLowerCase() || '';
-
-    if (authError || !authData.user || requesterEmail !== allowedAdminEmail) {
-      return NextResponse.json({ error: 'Forbidden: admin email required' }, { status: 403 });
-    }
-
-    const supabase = createClient(supabaseUrl, serviceKey);
     const normalizedEventName = typeof event_name === 'string' && event_name.trim() ? event_name.trim() : null;
     const normalizedEventDate = typeof eventDate === 'string' && eventDate.trim() ? eventDate : null;
     const normalizedEventTime = typeof eventTime === 'string' && eventTime.trim() ? eventTime : null;
@@ -58,6 +37,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
+    revalidatePath('/');
     return NextResponse.json({ success: true });
   } catch (error: unknown) {
     const message = error instanceof Error ? error.message : String(error);

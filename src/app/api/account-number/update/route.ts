@@ -1,9 +1,8 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
-import { promises as fs } from 'fs';
-import path from 'path';
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { getRateLimitErrorResponse } from '@/lib/rate-limit';
+import { requireAdmin, getSupabaseConfig } from '@/lib/admin';
 import {
   validateAccountName,
   validateAccountNumber,
@@ -11,43 +10,74 @@ import {
   sanitizeString,
 } from '@/lib/validation';
 
-const ACCOUNT_FILE = path.resolve(process.cwd(), 'account-number.json');
+const KEY_ACCOUNT_NAME = 'account_name';
+const KEY_ACCOUNT_NUMBER = 'account_number';
+const KEY_BANK = 'bank';
 
-async function requireAdmin(request: NextRequest) {
-  const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
-  const anonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+async function getSettingValue(supabase: SupabaseClient, key: string) {
+  const { data, error } = await supabase
+    .from('site_settings')
+    .select('value')
+    .eq('key', key)
+    .maybeSingle();
 
-  if (!supabaseUrl || !anonKey) {
-    return { ok: false as const, response: NextResponse.json({ success: false, error: 'Server misconfigured' }, { status: 500 }) };
+  return { value: data?.value || '', error };
+}
+
+async function upsertSettingValue(
+  supabase: SupabaseClient,
+  key: string,
+  value: string
+) {
+  const { data: existing, error: existingError } = await supabase
+    .from('site_settings')
+    .select('id')
+    .eq('key', key)
+    .maybeSingle();
+
+  if (existingError) return { error: existingError };
+
+  if (existing?.id) {
+    const { error: updateError } = await supabase
+      .from('site_settings')
+      .update({ value })
+      .eq('id', existing.id);
+
+    return { error: updateError };
   }
 
-  const authHeader = request.headers.get('authorization') || '';
-  const token = authHeader.startsWith('Bearer ') ? authHeader.slice(7) : '';
+  const { error: insertError } = await supabase
+    .from('site_settings')
+    .insert([{ key, value }]);
 
-  if (!token) {
-    return { ok: false as const, response: NextResponse.json({ success: false, error: 'Unauthorized: missing access token' }, { status: 401 }) };
-  }
-
-  const authClient = createClient(supabaseUrl, anonKey);
-  const { data: authData, error: authError } = await authClient.auth.getUser(token);
-  const allowedAdminEmail = (
-    process.env.ADMIN_EMAIL ||
-    process.env.NEXT_PUBLIC_ADMIN_EMAIL ||
-    'ayokunleshittu@gmail.com'
-  ).toLowerCase();
-  const requesterEmail = authData.user?.email?.toLowerCase() || '';
-
-  if (authError || !authData.user || requesterEmail !== allowedAdminEmail) {
-    return { ok: false as const, response: NextResponse.json({ success: false, error: 'Forbidden: admin email required' }, { status: 403 }) };
-  }
-
-  return { ok: true as const };
+  return { error: insertError };
 }
 
 export async function GET() {
   try {
-    const data = await fs.readFile(ACCOUNT_FILE, 'utf-8');
-    const { accountName = '', accountNumber = '', bank = '' } = JSON.parse(data);
+    const { supabaseUrl, serviceKey } = getSupabaseConfig();
+
+    if (!supabaseUrl || !serviceKey) {
+      return NextResponse.json({ accountName: '', accountNumber: '', bank: '', error: 'Server misconfigured' }, { status: 500 });
+    }
+
+    const supabase = createClient(supabaseUrl, serviceKey);
+
+    const [
+      { value: accountName, error: nameError },
+      { value: accountNumber, error: numberError },
+      { value: bank, error: bankError },
+    ] = await Promise.all([
+      getSettingValue(supabase, KEY_ACCOUNT_NAME),
+      getSettingValue(supabase, KEY_ACCOUNT_NUMBER),
+      getSettingValue(supabase, KEY_BANK),
+    ]);
+
+    const error = nameError || numberError || bankError;
+    if (error) {
+      return NextResponse.json({ accountName: '', accountNumber: '', bank: '', error: error?.message || 'Failed to load settings' }, { status: 500 });
+    }
+
     return NextResponse.json({ accountName, accountNumber, bank });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
@@ -93,11 +123,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    await fs.writeFile(
-      ACCOUNT_FILE,
-      JSON.stringify({ accountName, accountNumber, bank }),
-      'utf-8'
-    );
+    const { supabaseUrl, serviceKey } = getSupabaseConfig();
+    if (!supabaseUrl || !serviceKey) {
+      return NextResponse.json({ success: false, error: 'Server misconfigured' }, { status: 500 });
+    }
+
+    const supabase = createClient(supabaseUrl, serviceKey);
+
+    const results = await Promise.all([
+      upsertSettingValue(supabase, KEY_ACCOUNT_NAME, accountName),
+      upsertSettingValue(supabase, KEY_ACCOUNT_NUMBER, accountNumber),
+      upsertSettingValue(supabase, KEY_BANK, bank),
+    ]);
+
+    const error = results.find((r) => r.error)?.error;
+    if (error) {
+      return NextResponse.json({ success: false, error: error.message || 'Failed to save settings' }, { status: 500 });
+    }
+
     return NextResponse.json({ success: true, accountName, accountNumber, bank });
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

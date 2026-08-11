@@ -6,6 +6,7 @@ import AccountInfoSettings from "./components/AccountInfoSettings";
 import ContactSettings from "./components/ContactSettings";
 import SermonManager from "./components/SermonManager";
 import WorshipManager from "./components/WorshipManager";
+import MemoryVerseManager from "./components/MemoryVerseManager";
 
 export default function AdminDashboardPage() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -69,6 +70,7 @@ export default function AdminDashboardPage() {
             <ContactSettings />
             <SermonManager />
             <WorshipManager />
+            <MemoryVerseManager />
           </div>
 
           <div className="space-y-4">

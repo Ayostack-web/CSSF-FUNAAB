@@ -34,7 +34,7 @@ stable
 security definer
 set search_path = public, pg_temp
 as $$
-  select (select lower(coalesce(auth.jwt() ->> 'email', ''))) = 'ayokunleshittu@gmail.com';
+  select (select lower(coalesce(auth.jwt() ->> 'email', ''))) = 'cssf.funaab@ayostack.dev';
 $$;
 
 revoke all on function public.is_admin_email() from public;

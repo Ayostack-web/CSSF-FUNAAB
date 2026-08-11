@@ -8,32 +8,35 @@ export const runtime = 'nodejs';
 
 export async function POST(req: NextRequest) {
   try {
-    const rateLimitError = getRateLimitErrorResponse(req, 'api:worship-upload', 20, 60_000);
+    const rateLimitError = getRateLimitErrorResponse(req, 'api:sermon-upload', 20, 60_000);
     if (rateLimitError) return rateLimitError;
-
-    const body = await req.json();
-    const { title, image_url, order } = body;
 
     const authCheck = await requireAdmin(req);
     if (!authCheck.ok) return authCheck.response;
+
+    const { title, drive_link } = await req.json();
+
+    if (!title || !drive_link) {
+      return NextResponse.json({ error: 'Please provide both a title and a link.' }, { status: 400 });
+    }
 
     const supabase = createAdminClient();
     if (!supabase) {
       return NextResponse.json({ error: 'Server misconfigured' }, { status: 500 });
     }
 
-    const { error: dbError } = await supabase
-      .from('worship_images')
-      .insert([{ title, image_url, order: order || 0 }]);
+    const { error } = await supabase
+      .from('sermons')
+      .insert([{ title: String(title).trim(), drive_link: String(drive_link).trim() }]);
 
-    if (dbError) {
-      return NextResponse.json({ error: dbError.message }, { status: 500 });
+    if (error) {
+      return NextResponse.json({ error: error.message }, { status: 500 });
     }
 
     revalidatePath('/');
     return NextResponse.json({ success: true });
-  } catch (err: unknown) {
-    const errorMessage = err instanceof Error ? err.message : String(err);
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : String(error);
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

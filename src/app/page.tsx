@@ -1,4 +1,3 @@
-import { createClient } from "./utils/supabase/server";
 import { createClient as createServiceClient } from "@supabase/supabase-js";
 import Header from "./component/Header";
 import Footer from "./component/Footer";
@@ -13,8 +12,31 @@ import PledgeSection from "./component/PledgeSection";
 import Loader from "./component/Loader";
 import UpcomingEvent from "./component/UpcomingEvents";
 
-export const dynamic = "force-dynamic";
-export const revalidate = 0;
+export const revalidate = 300;
+
+interface SermonItem {
+  id: string;
+  title: string;
+  drive_link: string;
+  created_at: string;
+}
+
+interface WorshipItem {
+  id: string;
+  title: string;
+  image_url: string;
+  order: number;
+  created_at: string;
+}
+
+interface BannerItem {
+  id: string;
+  event_name: string;
+  image_url: string;
+  event_date?: string;
+  event_time?: string;
+  created_at: string;
+}
 
 function getStoragePathFromUrl(imageUrl: string, bucket: string): string {
   try {
@@ -31,11 +53,16 @@ function getStoragePathFromUrl(imageUrl: string, bucket: string): string {
   }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-type SupabaseClient = any;
-
 export default async function Home() {
-  const supabase: SupabaseClient = await createClient();
+  const serviceUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+  const key = serviceKey || process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!serviceUrl || !key) {
+    throw new Error("Supabase is not configured");
+  }
+
+  const supabase = createServiceClient(serviceUrl, key);
 
   const { data: sermons } = await supabase
     .from("sermons")
@@ -54,34 +81,24 @@ export default async function Home() {
     .select("*")
     .order("created_at", { ascending: false });
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let worshipWithUrls: any[] = worship || [];
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  let bannersWithUrls: any[] = banners || [];
+  const serverSermons = (sermons || []) as SermonItem[];
+  const serverGroups = (groups || []) as Array<Record<string, unknown>>;
+  const serverWorship = (worship || []) as WorshipItem[];
+  const serverEvents = (banners || []) as BannerItem[];
 
-  try {
-    const serviceUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
-    const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
-    if (serviceUrl && serviceKey) {
-      const service: SupabaseClient = createServiceClient(serviceUrl, serviceKey);
+  let worshipWithUrls = serverWorship;
+  let bannersWithUrls = serverEvents;
 
-      if (!Array.isArray(bannersWithUrls) || bannersWithUrls.length === 0) {
-        const { data: serviceBanners } = await service
-          .from("banners")
-          .select("*")
-          .order("created_at", { ascending: false });
-        bannersWithUrls = serviceBanners || [];
-      }
-
-      if (Array.isArray(worshipWithUrls) && worshipWithUrls.length > 0) {
-        const signedWorship = await Promise.all(
-          worshipWithUrls.map(async (item: { image_url?: string }) => {
+  if (serviceKey) {
+    try {
+      if (worshipWithUrls.length > 0) {
+        worshipWithUrls = await Promise.all(
+          worshipWithUrls.map(async (item) => {
             try {
-              const imageUrl = item.image_url || "";
-              const fileName = getStoragePathFromUrl(imageUrl, "worship_images");
+              const fileName = getStoragePathFromUrl(item.image_url || "", "worship_images");
               if (!fileName) return item;
 
-              const { data } = await service.storage
+              const { data } = await supabase.storage
                 .from("worship_images")
                 .createSignedUrl(fileName, 60 * 60);
 
@@ -91,18 +108,16 @@ export default async function Home() {
             }
           })
         );
-        worshipWithUrls = signedWorship;
       }
 
-      if (Array.isArray(bannersWithUrls) && bannersWithUrls.length > 0) {
-        const signedBanners = await Promise.all(
-          bannersWithUrls.map(async (item: { image_url?: string }) => {
+      if (bannersWithUrls.length > 0) {
+        bannersWithUrls = await Promise.all(
+          bannersWithUrls.map(async (item) => {
             try {
-              const imageUrl = item.image_url || "";
-              const fileName = getStoragePathFromUrl(imageUrl, "event-banners");
+              const fileName = getStoragePathFromUrl(item.image_url || "", "event-banners");
               if (!fileName) return item;
 
-              const { data } = await service.storage
+              const { data } = await supabase.storage
                 .from("event-banners")
                 .createSignedUrl(fileName, 60 * 60);
 
@@ -112,11 +127,10 @@ export default async function Home() {
             }
           })
         );
-        bannersWithUrls = signedBanners;
       }
+    } catch {
+      // ignore and fall back to stored URLs
     }
-  } catch {
-    // ignore and fall back to stored URLs
   }
 
   return (
@@ -125,9 +139,9 @@ export default async function Home() {
       <Hero />
       <About />
       <Loader />
-      <UpcomingEvent serverEvents={bannersWithUrls || []} />
-      <Groups serverGroups={groups || []} />
-      <Sermon serverSermons={sermons || []} serverWorship={worshipWithUrls || []} />
+      <UpcomingEvent serverEvents={bannersWithUrls} />
+      <Groups serverGroups={serverGroups} />
+      <Sermon serverSermons={serverSermons} serverWorship={worshipWithUrls} />
       <Service />
       <Verse />
       <PledgeSection />

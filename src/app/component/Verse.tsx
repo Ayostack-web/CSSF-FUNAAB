@@ -1,8 +1,9 @@
 "use client";
 import { useEffect, useState } from "react";
 import type { FC } from "react";
+import { createClient } from "../utils/supabase/client";
 
-const verses = [
+const fallbackVerses = [
   {
     quote: "Let your kingdom come. Let your pleasure be done, as in heaven, so on earth.",
     name: "Matthew 6:10 (NIV)",
@@ -17,16 +18,42 @@ const verses = [
   },
 ];
 
+interface Verse {
+  quote: string;
+  name: string;
+}
+
 const Verse: FC = () => {
+  const [verses, setVerses] = useState<Verse[]>(fallbackVerses);
   const [current, setCurrent] = useState(0);
 
   useEffect(() => {
+    let mounted = true;
+    const supabase = createClient();
+
+    (async () => {
+      const { data } = await supabase
+        .from("memory_verses")
+        .select("quote, reference")
+        .order("created_at", { ascending: false });
+
+      if (!mounted || !data || data.length === 0) return;
+      setVerses(data.map((v) => ({ quote: v.quote, name: v.reference })));
+      setCurrent(0);
+    })();
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  useEffect(() => {
     const interval = setInterval(
-      () => setCurrent((prev) => (prev + 1) % verses.length),
+      () => setCurrent((prev) => (prev + 1) % Math.max(verses.length, 1)),
       10000
     );
     return () => clearInterval(interval);
-  }, []);
+  }, [verses.length]);
 
   return (
     <section className="text-center py-5 px-5 section-shell backdrop-blur-md rounded-2xl">
