@@ -42,10 +42,11 @@ export const metadata: Metadata = {
 
   authors: [
     {
-      name: "Cherubim and Seraphim Unification Campus Fellowship FUNAAB",
+      name: "Ayokunle Shittu",
+      url: "https://www.ayostack.dev",
     },
   ],
-  creator: "CSSF FUNAAB",
+  creator: "Ayokunle Shittu",
 
   alternates: {
     canonical: "https://cssf-funaab.vercel.app",
