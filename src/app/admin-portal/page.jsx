@@ -7,6 +7,7 @@ import ContactSettings from "./components/ContactSettings";
 import SermonManager from "./components/SermonManager";
 import WorshipManager from "./components/WorshipManager";
 import MemoryVerseManager from "./components/MemoryVerseManager";
+import InboxManager from "./components/InboxManager";
 
 export default function AdminDashboardPage() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -66,6 +67,7 @@ export default function AdminDashboardPage() {
 
         <div className="grid lg:grid-cols-2 gap-10 items-start">
           <div className="flex flex-col gap-8">
+            <InboxManager />
             <AccountInfoSettings />
             <ContactSettings />
             <SermonManager />

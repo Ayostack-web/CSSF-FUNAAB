@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/carousel";
 import { Card } from "@/components/ui/card";
 import type { CarouselApi } from "@/components/ui/carousel";
+import { createClient } from "../utils/supabase/client";
 
 interface BannerEvent {
   id: string;
@@ -27,10 +28,44 @@ interface UpcomingEventsProps {
 }
 
 export default function UpcomingEvents({ serverEvents = [] }: UpcomingEventsProps) {
-  const [events] = useState(serverEvents);
+  const [events, setEvents] = useState(serverEvents);
   const [api, setApi] = useState<CarouselApi | undefined>(undefined);
   const [current, setCurrent] = useState(0);
   const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    const supabase = createClient();
+
+    const refreshEvents = async () => {
+      try {
+        const res = await fetch("/api/banner/list", { cache: "no-store" });
+        if (!res.ok) return;
+        const json = await res.json();
+        if (Array.isArray(json.banners)) {
+          setEvents(json.banners as BannerEvent[]);
+          setCurrent(0);
+          api?.scrollTo(0);
+        }
+      } catch {
+        return;
+      }
+    };
+
+    const channel = supabase
+      .channel("banners-live")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "banners" },
+        () => {
+          refreshEvents();
+        }
+      )
+      .subscribe();
+
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [api]);
 
   const formatEventDateTime = (event: BannerEvent) => {
     const rawDate = event.event_date || event.eventDate || "";
@@ -101,6 +136,7 @@ export default function UpcomingEvents({ serverEvents = [] }: UpcomingEventsProp
         </motion.div>
 
         <Carousel
+          key={events.length}
           setApi={setApi}
           plugins={[plugin.current]}
           onMouseEnter={plugin.current.stop}

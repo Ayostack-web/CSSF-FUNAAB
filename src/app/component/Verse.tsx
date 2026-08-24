@@ -33,7 +33,7 @@ const Verse: FC = () => {
     let mounted = true;
     const supabase = createClient();
 
-    (async () => {
+    const loadVerses = async () => {
       const { data } = await supabase
         .from("memory_verses")
         .select("quote, reference")
@@ -42,10 +42,24 @@ const Verse: FC = () => {
       if (!mounted || !data || data.length === 0) return;
       setVerses(data.map((v) => ({ quote: v.quote, name: v.reference })));
       setCurrent(0);
-    })();
+    };
+
+    loadVerses();
+
+    const channel = supabase
+      .channel("memory-verses-live")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "memory_verses" },
+        () => {
+          loadVerses();
+        }
+      )
+      .subscribe();
 
     return () => {
       mounted = false;
+      supabase.removeChannel(channel);
     };
   }, []);
 

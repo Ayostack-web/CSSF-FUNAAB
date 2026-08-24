@@ -11,6 +11,7 @@ import Sermon from "./component/Sermon";
 import PledgeSection from "./component/PledgeSection";
 import Loader from "./component/Loader";
 import UpcomingEvent from "./component/UpcomingEvents";
+import ChatWidget from "./component/ChatWidget";
 
 export const revalidate = 300;
 
@@ -147,6 +148,7 @@ export default async function Home() {
       <PledgeSection />
       <Contact />
       <Footer />
+      <ChatWidget />
     </>
   );
 }
