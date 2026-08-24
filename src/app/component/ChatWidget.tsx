@@ -2,7 +2,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { MessageCircle, X, Send } from "lucide-react";
-import { createClient } from "../utils/supabase/client";
 import { toast } from "sonner";
 
 const MAX_NAME = 80;
@@ -16,7 +15,6 @@ export default function ChatWidget() {
   const [body, setBody] = useState("");
   const [honeypot, setHoneypot] = useState("");
   const [sending, setSending] = useState(false);
-  const supabase = createClient();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,12 +32,13 @@ export default function ChatWidget() {
 
     setSending(true);
     try {
-      const { error } = await supabase.from("messages").insert({
-        name: name.trim(),
-        contact: contact.trim() || null,
-        body: body.trim(),
+      const res = await fetch("/api/messages/send", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, contact, body, honeypot }),
       });
-      if (error) throw new Error(error.message);
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error || "Could not send message");
 
       toast.success("Message sent! The leadership will get back to you.");
       setName("");
