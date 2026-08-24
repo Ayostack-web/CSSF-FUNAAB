@@ -70,7 +70,10 @@ export default async function Home() {
     .select("*")
     .order("created_at", { ascending: false });
 
-  const { data: groups } = await supabase.from("groups").select("*");
+  const { data: groups } = await supabase
+    .from("groups")
+    .select("*")
+    .order("sort_order", { ascending: true });
 
   const { data: worship } = await supabase
     .from("worship_images")
@@ -83,7 +86,13 @@ export default async function Home() {
     .order("created_at", { ascending: false });
 
   const serverSermons = (sermons || []) as SermonItem[];
-  const serverGroups = (groups || []) as Array<Record<string, unknown>>;
+  const serverGroups = (groups || []) as Array<{
+    id: string;
+    name: string;
+    about: string;
+    image: string;
+    link?: string | null;
+  }>;
   const serverWorship = (worship || []) as WorshipItem[];
   const serverEvents = (banners || []) as BannerItem[];
 

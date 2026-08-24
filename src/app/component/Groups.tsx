@@ -14,61 +14,64 @@ import {
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 
-interface GroupItem {
-  image: string;
+export interface GroupRow {
+  id: string;
   name: string;
-  icon: ReactNode;
   about: string;
-  link: string;
+  image: string;
+  link?: string | null;
 }
 
-const groups: GroupItem[] = [
+const fallbackGroups: GroupRow[] = [
   {
-    image: "/img/IMG_20251102_233014_825.jpg",
+    id: "prayer",
     name: "Prayer Unit",
-    icon: <HeartHandshake size={18} className="inline-block ml-2" />,
     about: "Connecting hearts to heaven through prayer. Join us in faith and fellowship!",
-    link: "#",
+    image: "/img/IMG_20251102_233014_825.jpg",
   },
   {
-    image: "/img/IMG_20251102_163931_572.jpg",
+    id: "choir",
     name: "Choir",
-    icon: <Music size={18} className="inline-block ml-2" />,
     about: "Lifting hearts with every note! Join our choir and feel the joy of worship.",
-    link: "#",
+    image: "/img/IMG_20251102_163931_572.jpg",
   },
   {
-    image: "/img/IMG_20251102_232336_623.jpg",
+    id: "drama",
     name: "Drama unit",
-    icon: <Clapperboard size={18} className="inline-block ml-2" />,
     about: "Bringing God's word to life through creativity and performance!",
-    link: "#",
+    image: "/img/IMG_20251102_232336_623.jpg",
   },
   {
-    image: "/img/IMG_20251102_232759_670.jpg",
+    id: "evangelical",
     name: "Evangelical Unit",
-    icon: <Heart size={18} className="inline-block ml-2" />,
     about: "Sharing God's love with the world, one heart at a time!",
-    link: "#",
+    image: "/img/IMG_20251102_232759_670.jpg",
   },
   {
-    image: "/img/IMG_20251102_221019_834.jpg",
+    id: "media",
     name: "Media Unit",
-    icon: <Camera size={18} className="inline-block ml-2" />,
     about: "Capturing and sharing the message of God through creativity and technology.",
-    link: "#",
+    image: "/img/IMG_20251102_221019_834.jpg",
   },
   {
-    image: "/img/IMG_20251103_132510_405~2.jpg",
+    id: "levite",
     name: "Levite Unit",
-    icon: <Swords size={18} className="inline-block ml-2" />,
     about: "To create an atmosphere where God's presence is honoured and His people are lifted.",
-    link: "#",
+    image: "/img/IMG_20251103_132510_405~2.jpg",
   },
 ];
 
+function iconForGroup(name: string): ReactNode {
+  const n = name.toLowerCase();
+  if (n.includes("choir")) return <Music size={18} className="inline-block ml-2" />;
+  if (n.includes("drama")) return <Clapperboard size={18} className="inline-block ml-2" />;
+  if (n.includes("evangel")) return <Heart size={18} className="inline-block ml-2" />;
+  if (n.includes("media")) return <Camera size={18} className="inline-block ml-2" />;
+  return <HeartHandshake size={18} className="inline-block ml-2" />;
+}
+
 interface GroupsProps {
-  serverGroups?: Array<Record<string, unknown>>;
+  serverGroups?: GroupRow[];
 }
 
 const cardVariants = {
@@ -118,8 +121,9 @@ function SpotlightCard({ children }: { children: ReactNode }) {
   );
 }
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-export default function Groups({ serverGroups: _serverGroups }: GroupsProps = {}) {
+export default function Groups({ serverGroups }: GroupsProps = {}) {
+  const items = serverGroups && serverGroups.length > 0 ? serverGroups : fallbackGroups;
+
   return (
     <section id="Group" className="py-8 px-4 section-shell text-black">
       <h2 className="section-title text-4xl text-center mb-12">
@@ -127,9 +131,9 @@ export default function Groups({ serverGroups: _serverGroups }: GroupsProps = {}
       </h2>
 
       <div className="max-w-4xl mx-auto grid md:grid-cols-3 gap-10">
-        {groups.map((grp, idx) => (
+        {items.map((grp, idx) => (
           <motion.div
-            key={idx}
+            key={grp.id || idx}
             initial="hidden"
             whileInView="visible"
             viewport={{ once: true, amount: 0.3 }}
@@ -137,13 +141,19 @@ export default function Groups({ serverGroups: _serverGroups }: GroupsProps = {}
             custom={idx}
           >
             <SpotlightCard>
-              <div className="relative w-full h-80 overflow-hidden">
-                <Image
-                  src={grp.image}
-                  alt={grp.name}
-                  fill
-                  className="object-cover saturate-100 transition-transform duration-500 group-hover:scale-105"
-                />
+              <div className="relative w-full h-80 overflow-hidden bg-blue-100">
+                {grp.image ? (
+                  <Image
+                    src={grp.image}
+                    alt={grp.name}
+                    fill
+                    className="object-cover saturate-100 transition-transform duration-500 group-hover:scale-105"
+                  />
+                ) : (
+                  <div className="w-full h-full flex items-center justify-center">
+                    {iconForGroup(grp.name)}
+                  </div>
+                )}
               </div>
 
               <div className="p-6">
@@ -151,13 +161,15 @@ export default function Groups({ serverGroups: _serverGroups }: GroupsProps = {}
                   <Badge variant="default" className="bg-blue-900 text-white font-extrabold">
                     {grp.name}
                   </Badge>
-                  <span className="text-blue-800 text-lg font-bold">{grp.icon}</span>
+                  <span className="text-blue-800 text-lg font-bold">{iconForGroup(grp.name)}</span>
                 </div>
                 <p className="mt-2">{grp.about}</p>
                 <br />
-                {grp.link && (
+                {grp.link && grp.link !== "#" && (
                   <a
                     href={grp.link}
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
                   >
                     Learn More <ExternalLink size={14} />

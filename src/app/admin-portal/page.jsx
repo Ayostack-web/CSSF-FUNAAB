@@ -8,6 +8,7 @@ import SermonManager from "./components/SermonManager";
 import WorshipManager from "./components/WorshipManager";
 import MemoryVerseManager from "./components/MemoryVerseManager";
 import InboxManager from "./components/InboxManager";
+import GroupsManager from "./components/GroupsManager";
 
 export default function AdminDashboardPage() {
   const [isAdmin, setIsAdmin] = useState(false);
@@ -78,6 +79,7 @@ export default function AdminDashboardPage() {
           <div className="space-y-4">
             <h3 className="text-sm font-bold text-slate-400 uppercase tracking-widest ml-2">Event Banners</h3>
             <BannerAdmin />
+            <GroupsManager />
           </div>
         </div>
       </div>
