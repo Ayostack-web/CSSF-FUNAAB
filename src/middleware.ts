@@ -4,7 +4,7 @@ import { createServerClient } from '@supabase/ssr'
 const ADMIN_EMAIL = (
   process.env.ADMIN_EMAIL ||
   process.env.NEXT_PUBLIC_ADMIN_EMAIL ||
-  'ayokunleshittu@gmail.com'
+  'cssf.funaab@ayostack.dev'
 ).toLowerCase()
 
 export async function middleware(request: NextRequest) {
