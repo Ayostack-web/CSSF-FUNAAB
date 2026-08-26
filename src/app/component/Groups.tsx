@@ -9,8 +9,8 @@ import {
   Heart,
   Camera,
   Swords,
-  ExternalLink,
 } from "lucide-react";
+import { FaExternalLinkAlt } from "react-icons/fa";
 import { motion } from "framer-motion";
 import { Badge } from "@/components/ui/badge";
 
@@ -165,16 +165,18 @@ export default function Groups({ serverGroups }: GroupsProps = {}) {
                 </div>
                 <p className="mt-2">{grp.about}</p>
                 <br />
-                {grp.link && grp.link !== "#" && (
-                  <a
-                    href={grp.link}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
-                  >
-                    Learn More <ExternalLink size={14} />
-                  </a>
-                )}
+                <a
+                  href={grp.link && grp.link !== "#" ? grp.link : "#"}
+                  target={grp.link && grp.link !== "#" ? "_blank" : undefined}
+                  rel={grp.link && grp.link !== "#" ? "noopener noreferrer" : undefined}
+                  className="group/link inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent hover:from-blue-800 hover:to-purple-800 font-semibold transition-all duration-300"
+                >
+                  Learn More
+                  <FaExternalLinkAlt
+                    size={14}
+                    className="fill-blue-600 group-hover/link:fill-purple-600 transition-all duration-300 group-hover/link:translate-x-0.5 group-hover/link:-translate-y-0.5"
+                  />
+                </a>
               </div>
             </SpotlightCard>
           </motion.div>

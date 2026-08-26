@@ -6,7 +6,7 @@ import { createClient } from "../../utils/supabase/client";
 import { toast } from "sonner";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Trash2, Upload, Save } from "lucide-react";
+import { Trash2, Upload, Save, Link } from "lucide-react";
 
 interface Group {
   id: string;
@@ -199,13 +199,16 @@ const GroupsManager: FC = () => {
             value={newAbout}
             onChange={(e) => setNewAbout(e.target.value)}
           />
-          <Input
-            type="text"
-            placeholder="WhatsApp or form link (optional)"
-            className="h-12 rounded-lg"
-            value={newLink}
-            onChange={(e) => setNewLink(e.target.value)}
-          />
+          <div className="relative">
+            <Link size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+            <Input
+              type="text"
+              placeholder="WhatsApp or form link (optional)"
+              className="h-12 rounded-lg pl-10"
+              value={newLink}
+              onChange={(e) => setNewLink(e.target.value)}
+            />
+          </div>
           <Input
             type="file"
             accept="image/*"
@@ -264,13 +267,27 @@ const GroupsManager: FC = () => {
                       value={draft.about}
                       onChange={(e) => setDraft(group.id, { about: e.target.value })}
                     />
-                    <Input
-                      type="text"
-                      placeholder="Link (optional)"
-                      className="h-10 rounded-lg"
-                      value={draft.link}
-                      onChange={(e) => setDraft(group.id, { link: e.target.value })}
-                    />
+                    <div
+                      className={`inline-flex items-center gap-1.5 px-2 py-1 rounded-md text-xs transition ${
+                        draft.link
+                          ? "bg-blue-50 text-blue-600"
+                          : "bg-gray-50 text-gray-400"
+                      }`}
+                      title={draft.link ? "Has link" : "No link set"}
+                    >
+                      <Link size={12} />
+                      {draft.link ? "Link added" : "No link"}
+                    </div>
+                    <div className="relative">
+                      <Input
+                        type="text"
+                        placeholder="WhatsApp or form link (optional)"
+                        className="h-10 rounded-lg pl-9"
+                        value={draft.link}
+                        onChange={(e) => setDraft(group.id, { link: e.target.value })}
+                      />
+                      <Link size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                    </div>
                   </div>
                 </div>
 
